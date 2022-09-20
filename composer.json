@@ -2,6 +2,7 @@
   "name": "nvuln/tiktokshop-client",
   "description": "Tiktok Shop API Client in PHP",
   "type": "library",
+  "license": "Apache-2.0",
   "authors": [
     {
       "name": "Jin",
