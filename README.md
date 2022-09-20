@@ -9,6 +9,12 @@ $app_secret = 'your app secret';
 $client = new Client($app_key, $app_secret);
 ```
 
+### Enable sandbox mode if you want to test the client
+
+```php
+$client->useSandboxMode();
+```
+
 ## Grant token
 
 There is a Auth class to help you getting the token from the shop using oAuth.
@@ -37,7 +43,7 @@ header('Location: '.$authUrl);
 
 ```php
 $authorization_code = $_GET['code'];
-$token = $auth->getToken($request->code);
+$token = $auth->getToken($authorization_code);
 
 $access_token = $token['access_token'];
 $refresh_token = $token['refresh_token'];
@@ -54,6 +60,16 @@ $authorizedShopList = $client->Shop->getAuthorizedShop();
 // extract shop_id from $authorizedShopList
 ```
 
+## Refresh your access token
+
+> Access token will be expired soon, so you need refresh new token by using `refresh_token`
+
+```php
+$new_token = $auth->refreshNewToken($refresh_token);
+
+$new_access_token = $new_token['access_token'];
+$new_refresh_token = $new_token['refresh_token'];
+```
 ## Usage API Example
 
 > You need `access_token` and `shop_id` to start using TiktokShop API
