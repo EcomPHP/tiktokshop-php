@@ -1,6 +1,6 @@
 {
   "name": "nvuln/tiktokshop-client",
-  "description": "Tiktok Shop API Client in PHP",
+  "description": "Unofficial TiktokShop API Client in PHP",
   "type": "library",
   "license": "Apache-2.0",
   "authors": [
@@ -11,7 +11,7 @@
     }
   ],
   "require": {
-    "php": ">=7.0",
+    "php": ">=7.1",
     "ext-json": "*",
     "guzzlehttp/guzzle": "^7.3"
   },
@@ -20,7 +20,7 @@
   },
   "autoload": {
     "psr-4": {
-      "NVuln\\TiktokShop\\": "src/"
+      "NVuln\\TiktokShop\\": "src"
     }
   },
   "autoload-dev": {
