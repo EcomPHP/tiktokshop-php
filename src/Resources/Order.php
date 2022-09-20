@@ -17,9 +17,9 @@ class Order extends Resource
 {
     protected $prefix = 'orders';
 
-    public function getOrderDetail($params)
+    public function getOrderDetail($order_id_list = [])
     {
-        $order_id_list = $params['order_id_list'] ?? $params;
+        $order_id_list = is_array($order_id_list) ? $order_id_list : [$order_id_list];
 
         return $this->call('POST', 'detail/query', [
             RequestOptions::JSON => [
