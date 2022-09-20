@@ -1,0 +1,30 @@
+{
+  "name": "nvuln/tiktokshop-client",
+  "description": "Tiktok Shop API Client in PHP",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Jin",
+      "email": "j@sax.vn",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=7.0",
+    "ext-json": "*",
+    "guzzlehttp/guzzle": "^7.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8|^9"
+  },
+  "autoload": {
+    "psr-4": {
+      "NVuln\\TiktokShop\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "NVuln\\TiktokShop\\Tests\\": "tests"
+    }
+  }
+}
