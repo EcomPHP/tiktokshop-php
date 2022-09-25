@@ -68,7 +68,7 @@ class Webhook
         $this->timestamp = $params['timestamp'];
     }
 
-    public function verify($signature = null, $rawData = null)
+    public function verify($signature = null, $rawData = null, $throw = true)
     {
         $signature = $signature ?? self::getAuthorizationHeader();
         $rawData = $rawData ?? file_get_contents('php://input');
@@ -76,9 +76,13 @@ class Webhook
         $stringToBeSigned = $this->client->getAppKey() . $rawData;
         $sign = hash_hmac('sha256', $stringToBeSigned, $this->client->getAppSecret());
 
-        if (!hash_equals($sign, $signature)) {
+        $verified = hash_equals($sign, $signature);
+
+        if ($throw && !$verified) {
             throw new TiktokShopException("Incoming webhook request invalid. Signature not match.");
         }
+
+        return $verified;
     }
 
     private static function getAuthorizationHeader()
