@@ -1,6 +1,6 @@
 {
   "name": "nvuln/tiktokshop-client",
-  "description": "Unofficial TiktokShop API Client in PHP",
+  "description": "Unofficial Tiktok Shop API Client for PHP",
   "type": "library",
   "license": "Apache-2.0",
   "authors": [

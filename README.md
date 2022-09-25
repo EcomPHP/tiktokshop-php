@@ -1,14 +1,16 @@
-# Unofficial TiktokShop API Client in PHP
+# Unofficial Tiktok Shop API Client in PHP
 
 [![Total Downloads](https://poser.pugx.org/nvuln/tiktokshop-client/downloads)](https://packagist.org/packages/nvuln/tiktokshop-client) 
 [![Latest Stable Version](https://poser.pugx.org/nvuln/tiktokshop-client/v/stable)](https://packagist.org/packages/nvuln/tiktokshop-client) 
 [![Latest Unstable Version](https://poser.pugx.org/nvuln/tiktokshop-client/v/unstable)](https://packagist.org/packages/nvuln/tiktokshop-client) 
 [![License](https://poser.pugx.org/nvuln/tiktokshop-client/license)](https://packagist.org/packages/nvuln/tiktokshop-client)
 
-TiktokShop API Client is a simple SDK implementation of Tiktok Shop API.
+Tiktok Shop API Client is a simple SDK implementation of Tiktok Shop API.
 
 ## Installation
+
 Install with Composer
+
 ```shell
 composer require nvuln/tiktokshop-client
 ```
@@ -110,4 +112,36 @@ $orders = $client->Order->getOrderList([
     'order_status' => 100, // Unpaid order
     'page_size' => 50,
 ]);
+```
+
+## Webhook
+
+Use webhook to receive incoming notification from tiktok shop
+
+```php
+$webhook = $client->webhook();
+```
+
+or manually configure the webhook receiver
+
+```php
+use NVuln\TiktokShop\Webhook;
+use NVuln\TiktokShop\Errors\TiktokShopException;
+
+$webhook = new Webhook($client);
+try {
+    $webhook->verify();
+    $webhook->capture($_POST);
+} catch (TiktokShopException $e) {
+    echo "webhook error: " . $e->getMessage() . "\n";
+}
+```
+
+```php
+echo "Type: " . $webhook->getType() . "\n";
+echo "Timestamp: " . $webhook->getTimestamp() . "\n";
+echo "Shop ID: " . $webhook->getShopId() . "\n";
+echo "Data: \n"; // data is array
+print_r($webhook->getData());
+
 ```

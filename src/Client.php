@@ -98,6 +98,15 @@ class Client
         return new Auth($this, $this->sandbox);
     }
 
+    public function webhook()
+    {
+        $webhook = new Webhook($this);
+        $webhook->verify();
+        $webhook->capture();
+
+        return $webhook;
+    }
+
     protected function httpClient()
     {
         $stack = HandlerStack::create();
