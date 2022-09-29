@@ -47,7 +47,7 @@ abstract class Resource
     {
         // token error
         if (floor($code / 1000) == 105) {
-            throw new TokenException($code, $message);
+            throw new TokenException($message, $code);
         }
 
         throw new ResponseException($message, $code);
