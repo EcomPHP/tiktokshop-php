@@ -13,6 +13,7 @@ namespace NVuln\TiktokShop;
 use GuzzleHttp\Client;
 use NVuln\TiktokShop\Errors\RequestException;
 use NVuln\TiktokShop\Errors\ResponseException;
+use NVuln\TiktokShop\Errors\TokenException;
 
 abstract class Resource
 {
@@ -44,6 +45,11 @@ abstract class Resource
 
     protected function handleErrorResponse($code, $message)
     {
+        // token error
+        if (floor($code / 1000) == 105) {
+            throw new TokenException($code, $message);
+        }
+
         throw new ResponseException($message, $code);
     }
 
