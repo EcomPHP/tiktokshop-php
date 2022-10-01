@@ -47,7 +47,7 @@ class Client
     protected $access_token;
     protected $sandbox;
 
-    const resources = [
+    public const resources = [
         Shop::class,
         Seller::class,
         Product::class,

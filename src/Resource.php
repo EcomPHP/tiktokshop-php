@@ -11,7 +11,6 @@
 namespace NVuln\TiktokShop;
 
 use GuzzleHttp\Client;
-use NVuln\TiktokShop\Errors\RequestException;
 use NVuln\TiktokShop\Errors\ResponseException;
 use NVuln\TiktokShop\Errors\TokenException;
 
@@ -32,7 +31,7 @@ abstract class Resource
         $response = $this->httpClient->request($method, $this->prefix.'/'.$action, $params);
         $json = json_decode($response->getBody()->getContents(), true);
         $code = $json['code'] ?? -1;
-        if ($code !== 0) {
+        if (is_array($json) && $code !== 0) {
             $this->handleErrorResponse($code, $json['message']);
         }
 
@@ -45,20 +44,15 @@ abstract class Resource
 
     protected function handleErrorResponse($code, $message)
     {
+        // get 3 first digit as the error code group
+        // more detail: https://developers.tiktok-shops.com/documents/document/234136
+        $errorGroup = floor($code / 1000);
+
         // token error
-        if (floor($code / 1000) == 105) {
+        if ($errorGroup == 105) {
             throw new TokenException($message, $code);
         }
 
         throw new ResponseException($message, $code);
-    }
-
-    protected function checkRequiredParameters($params, $data = [])
-    {
-        foreach ($params as $param) {
-            if (!isset($data[$param])) {
-                throw new RequestException('Parameter `'.$param.'` is required.');
-            }
-        }
     }
 }
