@@ -18,10 +18,13 @@ class Product extends Resource
 {
     protected $prefix = 'products';
 
-    public function uploadFile(SplFileInfo $file)
+    public function uploadFile($file, $file_name = 'uploaded_file')
     {
-        $file_data = file_get_contents($file);
-        $file_name = $file->getFilename();
+        $file_data = $file;
+        if ($file instanceof SplFileInfo) {
+            $file_data = file_get_contents($file);
+            $file_name = $file->getFilename();
+        }
 
         return $this->call('POST', 'upload_files', [
             RequestOptions::JSON => [
@@ -31,9 +34,13 @@ class Product extends Resource
         ]);
     }
 
-    public function uploadImage(SplFileInfo $image, $scene = 'PRODUCT_IMAGE')
+    public function uploadImage($image, $scene = 'PRODUCT_IMAGE')
     {
-        $img_data = file_get_contents($image);
+        $img_data = $image;
+        if ($image instanceof SplFileInfo) {
+            $img_data = file_get_contents($image);
+        }
+
         $img_scene = $scene;
 
         return $this->call('POST', 'upload_imgs', [
