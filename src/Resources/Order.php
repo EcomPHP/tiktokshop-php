@@ -15,6 +15,16 @@ use NVuln\TiktokShop\Resource;
 
 class Order extends Resource
 {
+    // order status
+    public const STATUS_UNPAID = 100;
+    public const STATUS_AWAITING_SHIPMENT = 111;
+    public const STATUS_AWAITING_COLLECTION = 112;
+    public const STATUS_PARTIALLY_SHIPPING = 114;
+    public const STATUS_IN_TRANSIT = 121;
+    public const STATUS_DELIVERED = 122;
+    public const STATUS_COMPLETED = 130;
+    public const STATUS_CANCELLED = 140;
+
     protected $prefix = 'orders';
 
     public function getOrderDetail($order_id_list = [])
