@@ -10,25 +10,19 @@
 
 namespace NVuln\TiktokShop\Tests\Resources;
 
-use NVuln\TiktokShop\Tests\SDK;
 use NVuln\TiktokShop\Tests\TestResource;
 
 class OrderTest extends TestResource
 {
-
     public function testGetOrderDetail()
     {
-        $test_order_id = '576674884447668997';
-        $order = SDK::$client->Order->getOrderDetail($test_order_id);
-
-        $this->assertArrayHasKey('order_list', $order);
+        $this->caller->getOrderDetail('sample order id');
+        $this->assertPreviousRequest('post', 'orders/detail/query');
     }
 
     public function testGetOrderList()
     {
-        $orders = SDK::$client->Order->getOrderList();
-
-        $this->assertArrayHasKey('order_list', $orders);
-        $this->assertArrayHasKey('total', $orders);
+        $this->caller->getOrderList();
+        $this->assertPreviousRequest('post', 'orders/search');
     }
 }

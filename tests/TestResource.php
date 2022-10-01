@@ -10,28 +10,73 @@
 
 namespace NVuln\TiktokShop\Tests;
 
-use NVuln\TiktokShop\Client;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
+
+use NVuln\TiktokShop\Client as TiktokApiClient;
 
 abstract class TestResource extends TestCase
 {
-    public static function setUpBeforeClass(): void
+    protected $caller;
+
+    /**
+     * @var MockHandler
+     */
+    protected static $mockHandler;
+    protected static $response;
+
+    public static $httpClient;
+    public static $container = [];
+
+    protected function setUp(): void
     {
-        if (SDK::$client === null) {
-            $client = new Client(getenv('TIKTOKSHOP_APP_KEY'), getenv('TIKTOKSHOP_APP_SECRET'));
-            $client->useSandboxMode();
-            $client->setShopId(getenv('TIKTOKSHOP_SHOP_ID'));
+        parent::setUp();
 
-            $auth = $client->auth();
-            $token = $auth->refreshNewToken(getenv('TIKTOKSHOP_REFRESH_TOKEN'));
+        $reflection = new \ReflectionClass(static::class);
+        $className = substr($reflection->getShortName(), 0, -4);
 
-            $client->setAccessToken($token['access_token']);
-            SDK::$client = $client;
-        }
+        $client = new TiktokApiClient('app_key', 'app_secret');
+
+        $this->caller = $client->{$className};
+        $this->caller->useHttpClient(static::$httpClient);
     }
 
-    public static function tearDownAfterClass(): void
+    public static function setUpBeforeClass(): void
     {
-        SDK::$client = null;
+        static::$response = new Response(200, [], '{"code":0,"message":"success","data":[],"request_id":"sample request id"}');
+        static::$mockHandler = new MockHandler();
+        static::$mockHandler->append(static::$response);
+
+        $handler = HandlerStack::create(static::$mockHandler);
+        $handler->push(Middleware::history(static::$container));
+
+        static::$httpClient = new Client([
+            'handler' => $handler,
+        ]);
+    }
+
+    /**
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    protected function getPreviousRequest()
+    {
+        $request = array_pop(static::$container)['request'];
+
+        // reset mock queue and append response for next request
+        static::$mockHandler->reset();
+        static::$mockHandler->append(static::$response);
+
+        return $request;
+    }
+
+    protected function assertPreviousRequest($method, $uri)
+    {
+        $request = $this->getPreviousRequest();
+        $this->assertEquals(strtolower($method), strtolower($request->getMethod()));
+        $this->assertEquals($uri, trim($request->getUri()->getPath(), '/'));
     }
 }

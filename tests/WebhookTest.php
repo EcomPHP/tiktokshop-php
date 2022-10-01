@@ -14,6 +14,7 @@ use NVuln\TiktokShop\Client;
 use NVuln\TiktokShop\Errors\TiktokShopException;
 use NVuln\TiktokShop\Webhook;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class WebhookTest extends TestCase
 {
@@ -67,6 +68,29 @@ class WebhookTest extends TestCase
     public function testGetData()
     {
         $sample_data = json_decode(static::$sample_data, true);
-        $this->assertEquals($sample_data['data'] ?? '', static::$webhook->getData());
+        $this->assertEquals($sample_data['data'], static::$webhook->getData());
+    }
+
+    public function test__construct()
+    {
+        $client = new Client('fake_app_key', 'fake_app_secret');
+        $webhook = new Webhook($client);
+
+        $reflect = new ReflectionClass($webhook);
+        $this->assertInstanceOf(Client::class, $reflect->getProperty('client')->getValue($webhook));
+    }
+
+    public function testCapture()
+    {
+        $webhook = static::$webhook;
+        $sample_data = json_decode(static::$sample_data, true);
+
+        $webhook->capture($sample_data);
+        $reflect = new ReflectionClass($webhook);
+
+        $this->assertEquals(1, $reflect->getProperty('type')->getValue($webhook));
+        $this->assertEquals('7494726673780148744', $reflect->getProperty('shop_id')->getValue($webhook));
+        $this->assertEquals($sample_data['data'], $reflect->getProperty('data')->getValue($webhook));
+        $this->assertEquals(1664095733, $reflect->getProperty('timestamp')->getValue($webhook));
     }
 }
