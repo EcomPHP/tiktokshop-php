@@ -154,9 +154,12 @@ class Fulfillment extends Resource
         ]);
     }
 
-    public function fulfillmentUploadImage(SplFileInfo $image, $scene = 'UNSPECIFIED')
+    public function fulfillmentUploadImage($image, $scene = 'UNSPECIFIED')
     {
-        $img_data = file_get_contents($image);
+        $img_data = $image;
+        if ($image instanceof SplFileInfo) {
+            $img_data = file_get_contents($image);
+        }
         $img_scene = $scene;
 
         return $this->call('POST', 'uploadimage', [
@@ -167,10 +170,13 @@ class Fulfillment extends Resource
         ]);
     }
 
-    public function fulfillmentUploadFile(SplFileInfo $file)
+    public function fulfillmentUploadFile($file, $file_name = 'uploaded_file')
     {
-        $file_data = file_get_contents($file);
-        $file_name = $file->getFilename();
+        $file_data = $file;
+        if ($file instanceof SplFileInfo) {
+            $file_data = file_get_contents($file);
+            $file_name = $file->getFilename();
+        }
 
         return $this->call('POST', 'uploadfile', [
             RequestOptions::JSON => [
