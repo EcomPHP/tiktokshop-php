@@ -27,5 +27,8 @@
     "psr-4": {
       "NVuln\\TiktokShop\\Tests\\": "tests"
     }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
   }
 }
