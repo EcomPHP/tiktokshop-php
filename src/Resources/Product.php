@@ -180,7 +180,7 @@ class Product extends Resource
 
     public function getCategoryRule($category_id)
     {
-        return $this->call('GET', 'attributes', [
+        return $this->call('GET', 'categories/rules', [
             RequestOptions::QUERY => [
                 'category_id' => $category_id
             ]
