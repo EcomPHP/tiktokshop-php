@@ -77,7 +77,10 @@ class WebhookTest extends TestCase
         $webhook = new Webhook($client);
 
         $reflect = new ReflectionClass($webhook);
-        $this->assertInstanceOf(Client::class, $reflect->getProperty('client')->getValue($webhook));
+        $clientProperty = $reflect->getProperty('client');
+        $clientProperty->setAccessible(true);
+
+        $this->assertInstanceOf(Client::class, $clientProperty->getValue($webhook));
     }
 
     public function testCapture()
@@ -88,9 +91,20 @@ class WebhookTest extends TestCase
         $webhook->capture($sample_data);
         $reflect = new ReflectionClass($webhook);
 
-        $this->assertEquals(1, $reflect->getProperty('type')->getValue($webhook));
-        $this->assertEquals('7494726673780148744', $reflect->getProperty('shop_id')->getValue($webhook));
-        $this->assertEquals($sample_data['data'], $reflect->getProperty('data')->getValue($webhook));
-        $this->assertEquals(1664095733, $reflect->getProperty('timestamp')->getValue($webhook));
+        $typeProperty = $reflect->getProperty('type');
+        $typeProperty->setAccessible(true);
+        $this->assertEquals(1, $typeProperty->getValue($webhook));
+
+        $shopIdProperty = $reflect->getProperty('shop_id');
+        $shopIdProperty->setAccessible(true);
+        $this->assertEquals('7494726673780148744', $shopIdProperty->getValue($webhook));
+
+        $dataProperty = $reflect->getProperty('data');
+        $dataProperty->setAccessible(true);
+        $this->assertEquals($sample_data['data'], $dataProperty->getValue($webhook));
+
+        $timestampProperty = $reflect->getProperty('timestamp');
+        $timestampProperty->setAccessible(true);
+        $this->assertEquals(1664095733, $timestampProperty->getValue($webhook));
     }
 }

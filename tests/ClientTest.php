@@ -13,6 +13,7 @@ namespace NVuln\TiktokShop\Tests;
 use NVuln\TiktokShop\Auth;
 use NVuln\TiktokShop\Client;
 use NVuln\TiktokShop\Errors\TiktokShopException;
+use NVuln\TiktokShop\Resource;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -32,10 +33,13 @@ class ClientTest extends TestCase
 
     public function testSetAccessToken()
     {
-        $clientReflection = new \ReflectionClass($this->client);
+        $clientReflection = new ReflectionClass($this->client);
+
+        $accessTokenProperty = $clientReflection->getProperty('access_token');
+        $accessTokenProperty->setAccessible(true);
 
         $this->client->setAccessToken('new_access_token');
-        $this->assertEquals('new_access_token', $clientReflection->getProperty('access_token')->getValue($this->client));
+        $this->assertEquals('new_access_token', $accessTokenProperty->getValue($this->client));
     }
 
     public function testAuth()
@@ -45,30 +49,37 @@ class ClientTest extends TestCase
 
     public function testSetShopId()
     {
-        $clientReflection = new \ReflectionClass($this->client);
+        $clientReflection = new ReflectionClass($this->client);
+
+        $shopIdProperty = $clientReflection->getProperty('shop_id');
+        $shopIdProperty->setAccessible(true);
+
         $this->client->setShopId('new_shop_id');
 
-        $this->assertEquals('new_shop_id', $clientReflection->getProperty('shop_id')->getValue($this->client));
+        $this->assertEquals('new_shop_id', $shopIdProperty->getValue($this->client));
     }
 
     public function testUseSandboxMode()
     {
-        $clientReflection = new \ReflectionClass($this->client);
+        $clientReflection = new ReflectionClass($this->client);
+
+        $sandboxProperty = $clientReflection->getProperty('sandbox');
+        $sandboxProperty->setAccessible(true);
 
         // sandbox is off
-        $this->assertEquals(false, $clientReflection->getProperty('sandbox')->getValue($this->client));
+        $this->assertEquals(false, $sandboxProperty->getValue($this->client));
 
         $this->client->useSandboxMode();
 
         // sandbox is on
-        $this->assertEquals(true, $clientReflection->getProperty('sandbox')->getValue($this->client));
+        $this->assertEquals(true, $sandboxProperty->getValue($this->client));
     }
 
     public function test__get()
     {
         $resources = Client::resources;
         foreach ($resources as $resource) {
-            $reflect = new \ReflectionClass($resource);
+            $reflect = new ReflectionClass($resource);
             $className = $reflect->getShortName();
 
             $this->assertInstanceOf($resource, $this->client->{$className});
@@ -76,21 +87,21 @@ class ClientTest extends TestCase
 
         // test fail resource
         $this->expectException(TiktokShopException::class);
-        $this->client->foo;
+        $resource = $this->client->foo;
+        $this->assertNotInstanceOf(Resource::class, $resource);
     }
 
     public function test__construct()
     {
         $clientReflection = new ReflectionClass($this->client);
 
-        $this->assertEquals('app_key', $clientReflection->getProperty('app_key')->getValue($this->client));
         $this->assertEquals('app_key', $this->client->getAppKey());
-
-        $this->assertEquals('app_secret', $clientReflection->getProperty('app_secret')->getValue($this->client));
         $this->assertEquals('app_secret', $this->client->getAppSecret());
 
-        $this->assertEquals('shop_id', $clientReflection->getProperty('shop_id')->getValue($this->client));
-        $this->assertEquals(false, $clientReflection->getProperty('sandbox')->getValue($this->client));
+        $sandboxProperty = $clientReflection->getProperty('sandbox');
+        $sandboxProperty->setAccessible(true);
+
+        $this->assertEquals(false, $sandboxProperty->getValue($this->client));
     }
 
     public function testPrepareSignature()

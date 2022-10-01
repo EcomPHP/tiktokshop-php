@@ -46,7 +46,9 @@ class AuthTest extends TestCase
         $auth = $this->client->auth();
 
         $reflect = new ReflectionClass($auth);
-        $reflect->getProperty('httpClient')->setValue($auth, $httpClient);
+        $httpClientProperty = $reflect->getProperty('httpClient');
+        $httpClientProperty->setAccessible(true);
+        $httpClientProperty->setValue($auth, $httpClient);
 
         $auth->refreshNewToken('refresh_token');
         $request = $mockHandler->getLastRequest();
@@ -71,7 +73,9 @@ class AuthTest extends TestCase
         $auth = $this->client->auth();
 
         $reflect = new ReflectionClass($auth);
-        $reflect->getProperty('httpClient')->setValue($auth, $httpClient);
+        $httpClientProperty = $reflect->getProperty('httpClient');
+        $httpClientProperty->setAccessible(true);
+        $httpClientProperty->setValue($auth, $httpClient);
 
         $auth->getToken('auth code');
         $request = $mockHandler->getLastRequest();
@@ -92,7 +96,8 @@ class AuthTest extends TestCase
 
         // test returned url
         $authUrl = $auth->createAuthRequest('state', true);
-        $this->assertMatchesRegularExpression($regex, $authUrl);
+
+        $this->assertEquals(true, !!preg_match($regex, $authUrl));
     }
 
     public function test__construct()
@@ -101,9 +106,19 @@ class AuthTest extends TestCase
         $auth = new Auth($client);
 
         $reflect = new ReflectionClass($auth);
-        $this->assertEquals($client, $reflect->getProperty('client')->getValue($auth));
-        $this->assertMatchesRegularExpression('/https:\/\/auth.tiktok-shops.com/i', $reflect->getProperty('authHost')->getValue($auth));
-        $this->assertInstanceOf(Client::class, $reflect->getProperty('httpClient')->getValue($auth));
+
+        $clientProperty = $reflect->getProperty('client');
+        $clientProperty->setAccessible(true);
+
+        $authHostProperty = $reflect->getProperty('authHost');
+        $authHostProperty->setAccessible(true);
+
+        $httpClientProperty = $reflect->getProperty('httpClient');
+        $httpClientProperty->setAccessible(true);
+
+        $this->assertEquals($client, $clientProperty->getValue($auth));
+        $this->assertEquals(true, !!preg_match('/https:\/\/auth.tiktok-shops.com/i', $authHostProperty->getValue($auth)));
+        $this->assertInstanceOf(Client::class, $httpClientProperty->getValue($auth));
     }
 
 }
