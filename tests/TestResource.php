@@ -36,12 +36,11 @@ abstract class TestResource extends TestCase
     {
         parent::setUp();
 
-        $reflection = new \ReflectionClass(static::class);
-        $className = substr($reflection->getShortName(), 0, -4);
+        $resourceName = preg_replace('/.+\\\Resources\\\\(\w+)Test$/', '$1', get_called_class());
 
         $client = new TiktokApiClient('app_key', 'app_secret');
 
-        $this->caller = $client->{$className};
+        $this->caller = $client->{$resourceName};
         $this->caller->useHttpClient(static::$httpClient);
     }
 
