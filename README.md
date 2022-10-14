@@ -12,7 +12,7 @@ Tiktok Shop API Client is a simple SDK implementation of Tiktok Shop API.
 Install with Composer
 
 ```shell
-composer require nvuln/tiktokshop-client
+composer require nvuln/tiktokshop-php
 ```
 
 ## Configure TiktokShop PHP Client
