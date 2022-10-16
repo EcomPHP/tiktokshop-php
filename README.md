@@ -1,9 +1,9 @@
 # Unofficial Tiktok Shop API Client in PHP
 
-[![Total Downloads](https://poser.pugx.org/nvuln/tiktokshop-client/downloads)](https://packagist.org/packages/nvuln/tiktokshop-client) 
-[![Latest Stable Version](https://poser.pugx.org/nvuln/tiktokshop-client/v/stable)](https://packagist.org/packages/nvuln/tiktokshop-client) 
-[![Latest Unstable Version](https://poser.pugx.org/nvuln/tiktokshop-client/v/unstable)](https://packagist.org/packages/nvuln/tiktokshop-client) 
-[![License](https://poser.pugx.org/nvuln/tiktokshop-client/license)](https://packagist.org/packages/nvuln/tiktokshop-client)
+[![Total Downloads](https://poser.pugx.org/nvuln/tiktokshop-php/downloads)](https://packagist.org/packages/nvuln/tiktokshop-php) 
+[![Latest Stable Version](https://poser.pugx.org/nvuln/tiktokshop-php/v/stable)](https://packagist.org/packages/nvuln/tiktokshop-php) 
+[![Latest Unstable Version](https://poser.pugx.org/nvuln/tiktokshop-php/v/unstable)](https://packagist.org/packages/nvuln/tiktokshop-php) 
+[![License](https://poser.pugx.org/nvuln/tiktokshop-php/license)](https://packagist.org/packages/nvuln/tiktokshop-php)
 
 Tiktok Shop API Client is a simple SDK implementation of Tiktok Shop API.
 
