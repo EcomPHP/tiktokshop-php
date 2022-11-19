@@ -28,7 +28,8 @@ abstract class Resource
 
     public function call($method, $action, $params = [])
     {
-        $response = $this->httpClient->request($method, $this->prefix.'/'.$action, $params);
+        $uri = trim($this->prefix.'/'.$action, '/');
+        $response = $this->httpClient->request($method, $uri, $params);
         $json = json_decode($response->getBody()->getContents(), true);
         $code = $json['code'] ?? -1;
         if (is_array($json) && $code !== 0) {
