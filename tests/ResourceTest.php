@@ -33,7 +33,7 @@ class ResourceTest extends TestCase
     {
         $client = new Client([
             'handler' => HandlerStack::create(new MockHandler([
-                new Response(200, [], '{"code": 100000, "message": "error message"}'),
+                new Response(200, [], '{"code": 100000, "message": "error message", "request_id": "request id"}'),
             ]))
         ]);
 
@@ -41,5 +41,20 @@ class ResourceTest extends TestCase
 
         $this->expectException(ResponseException::class);
         $this->resource->call('GET', 'http://fake_request.com');
+    }
+
+    public function testLastMessageAndRequestId()
+    {
+        $client = new Client([
+            'handler' => HandlerStack::create(new MockHandler([
+                new Response(200, [], '{"code": 0, "message": "error message", "request_id": "request id"}'),
+            ]))
+        ]);
+
+        $this->resource->useHttpClient($client);
+        $this->resource->call('GET', 'http://fake_request.com');
+
+        $this->assertEquals($this->resource->getLastMessage(), 'error message');
+        $this->assertEquals($this->resource->getLastRequestId(), 'request id');
     }
 }
