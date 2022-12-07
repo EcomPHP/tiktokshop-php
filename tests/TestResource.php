@@ -23,13 +23,6 @@ abstract class TestResource extends TestCase
 {
     protected $caller;
 
-    /**
-     * @var MockHandler
-     */
-    protected static $mockHandler;
-    protected static $response;
-
-    public static $httpClient;
     public static $container = [];
 
     protected function setUp(): void
@@ -40,41 +33,25 @@ abstract class TestResource extends TestCase
 
         $client = new TiktokApiClient('app_key', 'app_secret');
 
-        $this->caller = $client->{$resourceName};
-        $this->caller->useHttpClient(static::$httpClient);
-    }
+        $response = new Response(200, [], '{"code":0,"message":"success","data":[],"request_id":"sample request id"}');
 
-    public static function setUpBeforeClass(): void
-    {
-        static::$response = new Response(200, [], '{"code":0,"message":"success","data":[],"request_id":"sample request id"}');
-        static::$mockHandler = new MockHandler();
-        static::$mockHandler->append(static::$response);
+        $mockHandler = new MockHandler();
+        $mockHandler->append($response);
 
-        $handler = HandlerStack::create(static::$mockHandler);
+        $handler = HandlerStack::create($mockHandler);
         $handler->push(Middleware::history(static::$container));
 
-        static::$httpClient = new Client([
+        $httpClient = new Client([
             'handler' => $handler,
         ]);
-    }
 
-    /**
-     * @return \GuzzleHttp\Psr7\Request
-     */
-    protected function getPreviousRequest()
-    {
-        $request = array_pop(static::$container)['request'];
-
-        // reset mock queue and append response for next request
-        static::$mockHandler->reset();
-        static::$mockHandler->append(static::$response);
-
-        return $request;
+        $this->caller = $client->{$resourceName};
+        $this->caller->useHttpClient($httpClient);
     }
 
     protected function assertPreviousRequest($method, $uri)
     {
-        $request = $this->getPreviousRequest();
+        $request = array_pop(static::$container)['request'];
         $this->assertEquals(strtolower($method), strtolower($request->getMethod()));
         $this->assertEquals($uri, trim($request->getUri()->getPath(), '/'));
     }
