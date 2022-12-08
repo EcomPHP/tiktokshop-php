@@ -14,6 +14,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use NVuln\TiktokShop\Errors\ResponseException;
 use NVuln\TiktokShop\Errors\TokenException;
+use SplFileInfo;
 
 abstract class Resource
 {
@@ -81,5 +82,30 @@ abstract class Resource
         }
 
         throw new ResponseException($message, $code);
+    }
+
+    static public function dataTypeCast($type, $data)
+    {
+        switch ($type) {
+            case 'image':
+            case 'file':
+                $file_data = $data;
+                if ($data instanceof SplFileInfo || (filter_var($data, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED) && getimagesize($data))) {
+                    $file_data = file_get_contents($data);
+                }
+
+                return base64_encode($file_data);
+            case 'int':
+            case 'integer':
+                return intval($data);
+            case 'array':
+                return is_array($data) ? $data : [$data];
+            case 'bool':
+            case 'boolean':
+                return boolval($data);
+            case 'string':
+            default:
+                return strval($data);
+        }
     }
 }
