@@ -157,15 +157,12 @@ class Product extends Resource
         ]);
     }
 
-    public function getAttributes($category_id = null)
+    public function getAttributes($category_id)
     {
-        $params = [];
-        if ($category_id) {
-            $params['category_id'] = $category_id;
-        }
-
         return $this->call('GET', 'attributes', [
-            RequestOptions::QUERY => $params
+            RequestOptions::QUERY => [
+                'category_id' => static::dataTypeCast('string', $category_id),
+            ]
         ]);
     }
 
