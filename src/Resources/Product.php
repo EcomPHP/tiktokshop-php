@@ -20,33 +20,24 @@ class Product extends Resource
 
     public function uploadFile($file, $file_name = 'uploaded_file')
     {
-        $file_data = $file;
         if ($file instanceof SplFileInfo) {
-            $file_data = file_get_contents($file);
             $file_name = $file->getFilename();
         }
 
         return $this->call('POST', 'upload_files', [
             RequestOptions::JSON => [
                 'file_name' => $file_name,
-                'file_data' => base64_encode($file_data),
+                'file_data' => static::dataTypeCast('file', $file),
             ]
         ]);
     }
 
-    public function uploadImage($image, $scene = 'PRODUCT_IMAGE')
+    public function uploadImage($image, $scene = 1 /* PRODUCT_IMAGE */)
     {
-        $img_data = $image;
-        if ($image instanceof SplFileInfo) {
-            $img_data = file_get_contents($image);
-        }
-
-        $img_scene = $scene;
-
         return $this->call('POST', 'upload_imgs', [
             RequestOptions::JSON => [
-                'img_data' => base64_encode($img_data),
-                'img_scene' => $img_scene,
+                'img_data' => static::dataTypeCast('image', $image),
+                'img_scene' => $scene,
             ]
         ]);
     }
@@ -60,10 +51,9 @@ class Product extends Resource
 
     public function deleteProduct($product_ids = [])
     {
-        $product_ids = is_array($product_ids) ? $product_ids : [$product_ids];
         return $this->call('DELETE', '/', [
             RequestOptions::JSON => [
-                'product_ids' => $product_ids
+                'product_ids' => static::dataTypeCast('array', $product_ids)
             ]
         ]);
     }
@@ -106,40 +96,34 @@ class Product extends Resource
         return $this->call('GET', 'details', [
             RequestOptions::QUERY => [
                 'product_id' => $product_id,
-                'need_audit_version' => $need_audit_version
+                'need_audit_version' => static::dataTypeCast('bool', $need_audit_version),
             ],
         ]);
     }
 
     public function deactivateProduct($product_ids = [])
     {
-        $product_ids = is_array($product_ids)? $product_ids : [$product_ids];
-
         return $this->call('POST', 'inactivated_products', [
             RequestOptions::JSON => [
-                'product_ids' => $product_ids
+                'product_ids' => static::dataTypeCast('array', $product_ids),
             ]
         ]);
     }
 
     public function activateProduct($product_ids = [])
     {
-        $product_ids = is_array($product_ids)? $product_ids : [$product_ids];
-
         return $this->call('POST', 'activate', [
             RequestOptions::JSON => [
-                'product_ids' => $product_ids
+                'product_ids' => static::dataTypeCast('array', $product_ids),
             ]
         ]);
     }
 
     public function recoverDeletedProduct($product_ids = [])
     {
-        $product_ids = is_array($product_ids)? $product_ids : [$product_ids];
-
         return $this->call('POST', 'recover', [
             RequestOptions::JSON => [
-                'product_ids' => $product_ids
+                'product_ids' => static::dataTypeCast('array', $product_ids),
             ]
         ]);
     }
