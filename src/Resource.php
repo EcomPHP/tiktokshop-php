@@ -10,6 +10,7 @@
 
 namespace NVuln\TiktokShop;
 
+use DateTimeInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use NVuln\TiktokShop\Errors\ResponseException;
@@ -103,6 +104,22 @@ abstract class Resource
             case 'bool':
             case 'boolean':
                 return boolval($data);
+            case 'timestamp':
+                $timestamp = $data;
+
+                if (!$timestamp) {
+                    return time();
+                }
+
+                if ($timestamp instanceof DateTimeInterface) {
+                    return $timestamp->getTimestamp();
+                }
+
+                if (is_string($timestamp)) {
+                    $timestamp = strtotime($timestamp) ?: time();
+                }
+
+                return $timestamp;
             case 'string':
             default:
                 return strval($data);

@@ -29,11 +29,9 @@ class Order extends Resource
 
     public function getOrderDetail($order_id_list = [])
     {
-        $order_id_list = is_array($order_id_list) ? $order_id_list : [$order_id_list];
-
         return $this->call('POST', 'detail/query', [
             RequestOptions::JSON => [
-                'order_id_list' => $order_id_list,
+                'order_id_list' => static::dataTypeCast('array', $order_id_list),
             ]
         ]);
     }

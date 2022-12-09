@@ -19,11 +19,9 @@ class Logistic extends Resource
 
     public function getSubscribedDeliveryOptions($warehouse_id_list = [])
     {
-        $warehouse_id_list = is_array($warehouse_id_list) ? $warehouse_id_list : [$warehouse_id_list];
-
         return $this->call('POST', 'get_subscribed_deliveryoptions', [
             RequestOptions::JSON => [
-                'warehouse_id_list' => $warehouse_id_list,
+                'warehouse_id_list' => static::dataTypeCast('array', $warehouse_id_list),
             ],
         ]);
     }
