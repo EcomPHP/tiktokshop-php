@@ -23,11 +23,9 @@ class Fulfillment extends Resource
      */
     public function verifyOrderSplit($order_id_list = [])
     {
-        $order_id_list = is_array($order_id_list) ? $order_id_list : [$order_id_list];
-
         return $this->call('POST', 'order_split/verify', [
             RequestOptions::JSON => [
-                'order_id_list' => $order_id_list,
+                'order_id_list' => static::dataTypeCast('array', $order_id_list),
             ]
         ]);
     }
@@ -124,23 +122,19 @@ class Fulfillment extends Resource
 
     public function removePackageOrder($package_id, $order_id_list = [])
     {
-        $order_id_list = is_array($order_id_list) ? $order_id_list : [$order_id_list];
-
         return $this->call('POST', 'package/remove', [
             RequestOptions::JSON => [
                 'package_id' => $package_id,
-                'order_id_list' => $order_id_list,
+                'order_id_list' => static::dataTypeCast('array', $order_id_list),
             ],
         ]);
     }
 
     public function confirmPrecombinePackage($pre_combine_pkg_list = [])
     {
-        $pre_combine_pkg_list = is_array($pre_combine_pkg_list) ? $pre_combine_pkg_list : [$pre_combine_pkg_list];
-
         return $this->call('POST', 'pre_combine_pkg/confirm', [
             RequestOptions::JSON => [
-                'pre_combine_pkg_list' => $pre_combine_pkg_list,
+                'pre_combine_pkg_list' => static::dataTypeCast('array', $pre_combine_pkg_list),
             ],
         ]);
     }
@@ -154,34 +148,26 @@ class Fulfillment extends Resource
         ]);
     }
 
-    public function fulfillmentUploadImage($image, $scene = 'UNSPECIFIED')
+    public function fulfillmentUploadImage($image, $scene = 0 /* UNSPECIFIED */)
     {
-        $img_data = $image;
-        if ($image instanceof SplFileInfo) {
-            $img_data = file_get_contents($image);
-        }
-        $img_scene = $scene;
-
         return $this->call('POST', 'uploadimage', [
             RequestOptions::JSON => [
-                'img_data' => base64_encode($img_data),
-                'img_scene' => $img_scene,
+                'img_data' => static::dataTypeCast('image', $image),
+                'img_scene' => $scene,
             ]
         ]);
     }
 
     public function fulfillmentUploadFile($file, $file_name = 'uploaded_file')
     {
-        $file_data = $file;
         if ($file instanceof SplFileInfo) {
-            $file_data = file_get_contents($file);
             $file_name = $file->getFilename();
         }
 
         return $this->call('POST', 'uploadfile', [
             RequestOptions::JSON => [
                 'file_name' => $file_name,
-                'file_data' => base64_encode($file_data),
+                'file_data' => static::dataTypeCast('file', $file),
             ]
         ]);
     }
