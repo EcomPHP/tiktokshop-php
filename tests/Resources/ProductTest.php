@@ -58,7 +58,7 @@ class ProductTest extends TestResource
 
     public function testGetBrands()
     {
-        $this->caller->getBrands(1);
+        $this->caller->getBrands([]);
         $this->assertPreviousRequest('GET', 'products/brands');
     }
 
