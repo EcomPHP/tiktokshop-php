@@ -145,13 +145,8 @@ class Product extends Resource
         return $this->call('GET', 'categories');
     }
 
-    public function getBrands($category_id = null)
+    public function getBrands(array $params)
     {
-        $params = [];
-        if ($category_id) {
-            $params['category_id'] = $category_id;
-        }
-
         return $this->call('GET', 'brands', [
             RequestOptions::QUERY => $params
         ]);
