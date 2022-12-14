@@ -104,4 +104,10 @@ class FulfillmentTest extends TestResource
         $this->caller->fulfillmentUploadImage('image content');
         $this->assertPreviousRequest('POST', 'fulfillment/uploadimage');
     }
+
+    public function testBatchShipPackages()
+    {
+        $this->caller->batchShipPackages([]);
+        $this->assertPreviousRequest('POST', 'fulfillment/batch_rts');
+    }
 }

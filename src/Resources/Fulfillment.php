@@ -180,4 +180,16 @@ class Fulfillment extends Resource
             ],
         ]);
     }
+
+    /**
+     * Use this api to batch ship packages
+     */
+    public function batchShipPackages($package_list)
+    {
+        return $this->call('POST', 'batch_rts', [
+            RequestOptions::JSON => [
+                'package_list' => static::dataTypeCast('array', $package_list),
+            ],
+        ]);
+    }
 }
