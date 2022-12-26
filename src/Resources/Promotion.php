@@ -90,16 +90,16 @@ class Promotion extends Resource
         ]);
     }
 
-    public function addPromotion($request_serial_no, $promotion_id, $title, $begin_time = null, $end_time = null, $product_type = 1)
+    public function addPromotion($request_serial_no, $title, $begin_time = null, $end_time = null, $product_type = 1, $promotion_type = 1)
     {
         return $this->call('POST', 'activity/create', [
             RequestOptions::JSON => [
-                'promotion_id' => $promotion_id,
                 'request_serial_no' => $request_serial_no,
                 'title' => $title,
                 'begin_time' => static::dataTypeCast('timestamp', $begin_time),
                 'end_time' => static::dataTypeCast('timestamp', $end_time),
                 'product_type' => $product_type,
+                'promotion_type' => $promotion_type,
             ]
         ]);
     }
