@@ -1,15 +1,8 @@
 {
-  "name": "nvuln/tiktokshop-php",
+  "name": "urbanfoxasia/tiktokshop-php",
   "description": "Unofficial Tiktok Shop API Client in PHP",
   "type": "library",
   "license": "Apache-2.0",
-  "authors": [
-    {
-      "name": "Jin",
-      "email": "j@sax.vn",
-      "role": "Developer"
-    }
-  ],
   "require": {
     "php": "^7.2|^8.0",
     "ext-json": "*",
