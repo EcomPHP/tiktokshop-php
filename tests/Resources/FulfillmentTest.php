@@ -36,7 +36,7 @@ class FulfillmentTest extends TestResource
     public function testUpdatePackageShippingInfo()
     {
         $this->caller->updatePackageShippingInfo(1, 'tracking_number', 1);
-        $this->assertPreviousRequest('POST', 'fulfillment/shipping_info');
+        $this->assertPreviousRequest('POST', 'fulfillment/shipping_info/update');
     }
 
     public function testFulfillmentUploadFile()

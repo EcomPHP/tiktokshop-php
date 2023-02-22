@@ -70,7 +70,7 @@ class Fulfillment extends Resource
 
     public function updatePackageShippingInfo($package_id, $tracking_number, $provider_id)
     {
-        return $this->call('POST', 'shipping_info', [
+        return $this->call('POST', 'shipping_info/update', [
             RequestOptions::JSON => [
                 'package_id' => $package_id,
                 'tracking_number' => $tracking_number,
