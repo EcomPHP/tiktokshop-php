@@ -14,7 +14,7 @@ use GuzzleHttp\RequestOptions;
 use NVuln\TiktokShop\Resource;
 use SplFileInfo;
 
-class Fulfillment extends Resourcenvuln/tiktokshop-php
+class Fulfillment extends Resource
 {
     protected $prefix = 'fulfillment';
 
