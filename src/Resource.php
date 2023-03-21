@@ -46,7 +46,7 @@ abstract class Resource
         }
 
         $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents(), true, JSON_THROW_ON_ERROR);
+        $json = json_decode($response->getBody()->getContents(), true);
 
         if ($json === null) {
             throw new ResponseException('Unable to parse response string as JSON');
