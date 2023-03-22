@@ -45,7 +45,8 @@ abstract class Resource
             throw new ResponseException($e->getMessage(), $e->getCode(), $e);
         }
 
-        $json = json_decode($response->getBody()->getContents(), true);
+        $json = json_decode((string) $response->getBody(), true);
+
         if ($json === null) {
             throw new ResponseException('Unable to parse response string as JSON');
         }
