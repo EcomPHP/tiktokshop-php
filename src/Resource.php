@@ -86,7 +86,6 @@ abstract class Resource
             default         =>  throw new ResponseException($message, $code)
         };
 
-        throw new ResponseException($message, $code);
     }
 
     static public function dataTypeCast($type, $data)
