@@ -71,16 +71,20 @@ abstract class Resource
         return $this->last_request_id;
     }
 
+    /**
+     * @throws ResponseException
+     * @throws TokenException
+     */
     protected function handleErrorResponse($code, $message)
     {
         // get 3 first digit as the error code group
         // more detail: https://partner.tiktokshop.com/doc/page/234136
         $errorGroup = substr(strval($code), 0, 3);
 
-        // token error
-        if ($errorGroup == '105') {
-            throw new TokenException($message, $code);
-        }
+        match ($errorGroup) {
+            '105', '360'    =>  throw new TokenException($message, $code),
+            default         =>  throw new ResponseException($message, $code)
+        };
 
         throw new ResponseException($message, $code);
     }
