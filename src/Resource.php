@@ -81,11 +81,13 @@ abstract class Resource
         // more detail: https://partner.tiktokshop.com/doc/page/234136
         $errorGroup = substr(strval($code), 0, 3);
 
-        match ($errorGroup) {
-            '105', '360'    =>  throw new TokenException($message, $code),
-            default         =>  throw new ResponseException($message, $code)
-        };
-
+        switch ($errorGroup) {
+            case '105':
+            case '360':
+                throw new TokenException($message, $code)
+            default:
+                throw new ResponseException($message, $code)
+        }
     }
 
     static public function dataTypeCast($type, $data)
