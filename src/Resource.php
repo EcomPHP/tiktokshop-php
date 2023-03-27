@@ -84,9 +84,9 @@ abstract class Resource
         switch ($errorGroup) {
             case '105':
             case '360':
-                throw new TokenException($message, $code)
+                throw new TokenException($message, $code);
             default:
-                throw new ResponseException($message, $code)
+                throw new ResponseException($message, $code);
         }
     }
 
