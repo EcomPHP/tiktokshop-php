@@ -49,6 +49,13 @@ class Product extends Resource
         ]);
     }
 
+    public function createDraftProduct($data = [])
+    {
+        return $this->call('POST', 'save_draft', [
+            RequestOptions::JSON => $data
+        ]);
+    }
+
     public function deleteProduct($product_ids = [])
     {
         return $this->call('DELETE', '/', [

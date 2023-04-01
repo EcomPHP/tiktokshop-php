@@ -20,6 +20,12 @@ class ProductTest extends TestResource
         $this->assertPreviousRequest('POST', 'products');
     }
 
+    public function testCreateDraftProduct()
+    {
+        $this->caller->createDraftProduct([]);
+        $this->assertPreviousRequest('POST', 'products/save_draft');
+    }
+
     public function testGetProductList()
     {
         $this->caller->getProductList();
