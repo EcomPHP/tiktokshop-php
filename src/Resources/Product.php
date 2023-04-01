@@ -159,6 +159,15 @@ class Product extends Resource
         ]);
     }
 
+    public function createBrand(string $brand_name)
+    {
+        return $this->call('POST', 'brand', [
+            RequestOptions::JSON => [
+                'brand_name' => $brand_name
+            ]
+        ]);
+    }
+
     public function getAttributes($category_id)
     {
         return $this->call('GET', 'attributes', [

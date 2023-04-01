@@ -68,6 +68,12 @@ class ProductTest extends TestResource
         $this->assertPreviousRequest('GET', 'products/brands');
     }
 
+    public function testCreateBrand()
+    {
+        $this->caller->createBrand('sample brand');
+        $this->assertPreviousRequest('POST', 'products/brand');
+    }
+
     public function testDeleteProduct()
     {
         $this->caller->deleteProduct([]);
