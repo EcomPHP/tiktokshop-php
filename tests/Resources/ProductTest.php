@@ -121,4 +121,10 @@ class ProductTest extends TestResource
         $this->caller->getCategoryRule(1);
         $this->assertPreviousRequest('GET', 'products/categories/rules');
     }
+
+    public function testCategoryRecommended()
+    {
+        $this->caller->categoryRecommended('product name', 'description');
+        $this->assertPreviousRequest('POST', 'product/category_recommend');
+    }
 }
