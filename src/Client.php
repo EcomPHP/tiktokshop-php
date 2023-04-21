@@ -41,6 +41,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class Client
 {
+    private CONST DEFAULT_VERSION = '202212';
     protected $app_key;
     protected $app_secret;
     protected $shop_id;
@@ -61,7 +62,7 @@ class Client
         Promotion::class,
     ];
 
-    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = '202212')
+    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = self::DEFAULT_VERSION)
     {
         $this->app_key = $app_key;
         $this->app_secret = $app_secret;
