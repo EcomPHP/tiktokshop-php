@@ -46,6 +46,7 @@ class Client
     protected $shop_id;
     protected $access_token;
     protected $sandbox;
+    protected $version;
 
     public const resources = [
         Shop::class,
@@ -60,12 +61,13 @@ class Client
         Promotion::class,
     ];
 
-    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false)
+    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = '202212')
     {
         $this->app_key = $app_key;
         $this->app_secret = $app_secret;
         $this->shop_id = $shop_id;
         $this->sandbox = $sandbox;
+        $this->version = $version;
     }
 
     public function useSandboxMode()
@@ -116,6 +118,7 @@ class Client
 
             $query['app_key'] = $this->getAppKey();
             $query['timestamp'] = time();
+            $query['version'] = $this->version;
             if ($this->shop_id && !isset($query['shop_id'])) {
                 $query['shop_id'] = $this->shop_id;
             }
