@@ -25,6 +25,7 @@ use NVuln\TiktokShop\Resources\Promotion;
 use NVuln\TiktokShop\Resources\Reverse;
 use NVuln\TiktokShop\Resources\Seller;
 use NVuln\TiktokShop\Resources\Shop;
+use NVuln\TiktokShop\Resources\Supplychain;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -38,6 +39,7 @@ use Psr\Http\Message\RequestInterface;
  * @property-read Finance $Finance
  * @property-read GlobalProduct $GlobalProduct
  * @property-read Promotion $Promotion
+ * @property-read Supplychain $Supplychain
  */
 class Client
 {
@@ -68,6 +70,7 @@ class Client
         Finance::class,
         GlobalProduct::class,
         Promotion::class,
+        Supplychain::class,
     ];
 
     public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = self::DEFAULT_VERSION, $options = [])
