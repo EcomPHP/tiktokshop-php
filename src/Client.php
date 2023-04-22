@@ -41,11 +41,13 @@ use Psr\Http\Message\RequestInterface;
  */
 class Client
 {
+    private CONST DEFAULT_VERSION = '202212';
     protected $app_key;
     protected $app_secret;
     protected $shop_id;
     protected $access_token;
     protected $sandbox;
+    protected $version;
 
     /**
      * custom guzzle client options
@@ -68,12 +70,13 @@ class Client
         Promotion::class,
     ];
 
-    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $options = [])
+    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = self::DEFAULT_VERSION, $options = [])
     {
         $this->app_key = $app_key;
         $this->app_secret = $app_secret;
         $this->shop_id = $shop_id;
         $this->sandbox = $sandbox;
+        $this->version = $version;
         $this->options = $options;
     }
 
@@ -125,6 +128,7 @@ class Client
 
             $query['app_key'] = $this->getAppKey();
             $query['timestamp'] = time();
+            $query['version'] = $this->version;
             if ($this->shop_id && !isset($query['shop_id'])) {
                 $query['shop_id'] = $this->shop_id;
             }
