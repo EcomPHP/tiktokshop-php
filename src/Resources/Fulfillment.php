@@ -70,7 +70,7 @@ class Fulfillment extends Resource
 
     public function updatePackageShippingInfo($package_id, $tracking_number, $provider_id)
     {
-        return $this->call('POST', 'shipping_info', [
+        return $this->call('POST', 'shipping_info/update', [
             RequestOptions::JSON => [
                 'package_id' => $package_id,
                 'tracking_number' => $tracking_number,
@@ -177,6 +177,18 @@ class Fulfillment extends Resource
         return $this->call('POST', 'delivery', [
             RequestOptions::JSON => [
                 'delivery_packages' => $delivery_packages,
+            ],
+        ]);
+    }
+
+    /**
+     * Use this api to batch ship packages
+     */
+    public function batchShipPackages($package_list)
+    {
+        return $this->call('POST', 'batch_rts', [
+            RequestOptions::JSON => [
+                'package_list' => static::dataTypeCast('array', $package_list),
             ],
         ]);
     }

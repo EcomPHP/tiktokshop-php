@@ -62,6 +62,10 @@ class Webhook
             $params = json_decode($rawData, true);
         }
 
+        if (!is_array($params)) {
+            throw new TiktokShopException("Incoming webhook request data invalid.");
+        }
+
         $this->type = $params['type'];
         $this->shop_id = $params['shop_id'];
         $this->data = $params['data'];

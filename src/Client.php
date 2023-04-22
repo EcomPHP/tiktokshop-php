@@ -49,6 +49,14 @@ class Client
     protected $sandbox;
     protected $version;
 
+    /**
+     * custom guzzle client options
+     *
+     * @var array
+     * @see https://docs.guzzlephp.org/en/stable/request-options.html
+     */
+    protected $options;
+
     public const resources = [
         Shop::class,
         Seller::class,
@@ -62,13 +70,14 @@ class Client
         Promotion::class,
     ];
 
-    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = self::DEFAULT_VERSION)
+    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = self::DEFAULT_VERSION, $options = [])
     {
         $this->app_key = $app_key;
         $this->app_secret = $app_secret;
         $this->shop_id = $shop_id;
         $this->sandbox = $sandbox;
         $this->version = $version;
+        $this->options = $options;
     }
 
     public function useSandboxMode()
@@ -137,13 +146,23 @@ class Client
 
         $api_domain_endpoint = $this->sandbox ? 'open-api-sandbox.tiktokglobalshop.com' : 'open-api.tiktokglobalshop.com';
 
-        return new GuzzleHttpClient([
-            RequestOptions::HTTP_ERRORS => false, // disable throw exception, manual handle it
+        $options = array_merge([
+            RequestOptions::HTTP_ERRORS => false, // disable throw exception on http 4xx, manual handle it
             'handler' => $stack,
             'base_uri' => 'https://'.$api_domain_endpoint.'/api/',
-        ]);
+        ], $this->options ?? []);
+
+        return new GuzzleHttpClient($options);
     }
 
+    /**
+     * tiktokshop api signature algorithm
+     * @see https://partner.tiktokshop.com/doc/page/274638
+     *
+     * @param $uri
+     * @param $params
+     * @return void
+     */
     protected function prepareSignature($uri, &$params)
     {
         $paramsToBeSigned = $params;
@@ -166,7 +185,7 @@ class Client
         // 4. Wrap string generated in step 3 with app_secret.
         $stringToBeSigned = $this->getAppSecret() . $stringToBeSigned . $this->getAppSecret();
 
-        // 7. Use sha256 to generate sign with salt(secret).
+        // Encode the digest byte stream in hexadecimal and use sha256 to generate sign with salt(secret).
         $params['sign'] = hash_hmac('sha256', $stringToBeSigned, $this->getAppSecret());
     }
 
