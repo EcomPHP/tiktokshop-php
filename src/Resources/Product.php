@@ -184,6 +184,16 @@ class Product extends Resource
         ]);
     }
 
+    public function getProductStock($product_ids = [], $sku_ids = [])
+    {
+        return $this->call('POST', 'products/stock/list', [
+            RequestOptions::JSON => [
+                'product_ids' => static::dataTypeCast('array', $product_ids),
+                'sku_ids' => static::dataTypeCast('array', $sku_ids),
+            ]
+        ]);
+    }
+
     public function categoryRecommended(string $product_name, string $description = '', array $images = [])
     {
         return $this->call('POST', 'product/category_recommend', [
