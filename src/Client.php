@@ -145,7 +145,11 @@ class Client
 
         $query['app_key'] = $this->getAppKey();
         $query['timestamp'] = time();
-        $query['version'] = $this->version;
+
+        if ($this->version && !isset($query['version'])) {
+            $query['version'] = $this->version;
+        }
+
         if ($this->shop_id && !isset($query['shop_id'])) {
             $query['shop_id'] = $this->shop_id;
         }

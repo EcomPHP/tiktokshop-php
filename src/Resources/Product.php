@@ -187,6 +187,9 @@ class Product extends Resource
     public function getProductStock($product_ids = [], $sku_ids = [])
     {
         return $this->call('POST', 'products/stock/list', [
+            RequestOptions::QUERY => [
+                'version' => '202305',
+            ],
             RequestOptions::JSON => [
                 'product_ids' => static::dataTypeCast('array', $product_ids),
                 'sku_ids' => static::dataTypeCast('array', $sku_ids),
@@ -207,6 +210,10 @@ class Product extends Resource
 
     public function precheckForOperatingProduct()
     {
-        return $this->call('POST', 'product/pre_check');
+        return $this->call('POST', 'product/pre_check', [
+            RequestOptions::QUERY => [
+                'version' => '202306',
+            ]
+        ]);
     }
 }
