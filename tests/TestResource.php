@@ -54,5 +54,7 @@ abstract class TestResource extends TestCase
         $request = array_pop(static::$container)['request'];
         $this->assertEquals(strtolower($method), strtolower($request->getMethod()));
         $this->assertEquals($uri, trim($request->getUri()->getPath(), '/'));
+
+        return $request;
     }
 }

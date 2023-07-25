@@ -127,4 +127,22 @@ class ProductTest extends TestResource
         $this->caller->categoryRecommended('product name', 'description');
         $this->assertPreviousRequest('POST', 'product/category_recommend');
     }
+
+    public function testGetProductStock()
+    {
+        $this->caller->getProductStock();
+        $request = $this->assertPreviousRequest('POST', 'products/stock/list');
+        parse_str($request->getUri()->getQuery(), $query);
+        $this->assertArrayHasKey('version', $query);
+        $this->assertTrue(intval($query['version']) >= 202305);
+    }
+
+    public function testPrecheckForOperatingProduct()
+    {
+        $this->caller->precheckForOperatingProduct([]);
+        $request = $this->assertPreviousRequest('POST', 'product/pre_check');
+        parse_str($request->getUri()->getQuery(), $query);
+        $this->assertArrayHasKey('version', $query);
+        $this->assertTrue(intval($query['version']) >= 202306);
+    }
 }
