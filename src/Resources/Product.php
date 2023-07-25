@@ -187,7 +187,7 @@ class Product extends Resource
     public function categoryRecommended(string $product_name, string $description = '', array $images = [])
     {
         return $this->call('POST', 'product/category_recommend', [
-            RequestOptions::QUERY => [
+            RequestOptions::JSON => [
                 'product_name' => $product_name,
                 'description' => $description,
                 'images' => $images,
