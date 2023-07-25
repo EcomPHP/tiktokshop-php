@@ -194,4 +194,9 @@ class Product extends Resource
             ]
         ]);
     }
+
+    public function precheckForOperatingProduct()
+    {
+        return $this->call('POST', 'product/pre_check');
+    }
 }
