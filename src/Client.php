@@ -48,6 +48,11 @@ class Client
     protected $app_secret;
     protected $shop_id;
     protected $access_token;
+
+    /**
+     * required for calling cross-border shop
+     */
+    protected $shop_cipher;
     protected $sandbox;
     protected $version;
 
@@ -108,6 +113,11 @@ class Client
         $this->shop_id = $shop_id;
     }
 
+    public function setShopCipher($shop_cipher)
+    {
+        $this->shop_cipher = $shop_cipher;
+    }
+
     public function auth()
     {
         return new Auth($this, $this->sandbox);
@@ -122,29 +132,49 @@ class Client
         return $webhook;
     }
 
+    /**
+     * append app_key, timestamp, version, shop_id, access_token, sign to request
+     *
+     * @param RequestInterface $request
+     * @return RequestInterface
+     */
+    protected function modifyRequestBeforeSend(RequestInterface $request)
+    {
+        $uri = $request->getUri();
+        parse_str($uri->getQuery(), $query);
+
+        $query['app_key'] = $this->getAppKey();
+        $query['timestamp'] = time();
+        $query['version'] = $this->version;
+        if ($this->shop_id && !isset($query['shop_id'])) {
+            $query['shop_id'] = $this->shop_id;
+        }
+
+        if ($this->access_token && !isset($query['access_token'])) {
+            $query['access_token'] = $this->access_token;
+        }
+
+        if ($this->shop_cipher && !isset($query['shop_cipher'])) {
+            $query['shop_cipher'] = $this->shop_cipher;
+        }
+
+        // do not pass shop_cipher to global product api
+        if (preg_match('/^\/api\/product\/global_products/', $uri->getPath())) {
+            unset($query['shop_cipher']);
+        }
+
+        $this->prepareSignature($uri->getPath(), $query);
+
+        $uri = $uri->withQuery(http_build_query($query));
+
+        return $request->withUri($uri);
+    }
+
     protected function httpClient()
     {
         $stack = HandlerStack::create();
         $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
-            $uri = $request->getUri();
-            parse_str($uri->getQuery(), $query);
-
-            $query['app_key'] = $this->getAppKey();
-            $query['timestamp'] = time();
-            $query['version'] = $this->version;
-            if ($this->shop_id && !isset($query['shop_id'])) {
-                $query['shop_id'] = $this->shop_id;
-            }
-
-            if ($this->access_token && !isset($query['access_token'])) {
-                $query['access_token'] = $this->access_token;
-            }
-
-            $this->prepareSignature($uri->getPath(), $query);
-
-            $uri = $uri->withQuery(http_build_query($query));
-
-            return $request->withUri($uri);
+            return $this->modifyRequestBeforeSend($request);
         }));
 
         $api_domain_endpoint = $this->sandbox ? 'open-api-sandbox.tiktokglobalshop.com' : 'open-api.tiktokglobalshop.com';

@@ -10,11 +10,13 @@
 
 namespace NVuln\TiktokShop\Tests;
 
+use GuzzleHttp\Psr7\Request;
 use NVuln\TiktokShop\Auth;
 use NVuln\TiktokShop\Client;
 use NVuln\TiktokShop\Errors\TiktokShopException;
 use NVuln\TiktokShop\Resource;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\RequestInterface;
 use ReflectionClass;
 
 class ClientTest extends TestCase
@@ -119,5 +121,38 @@ class ClientTest extends TestCase
 
         $this->assertArrayHasKey('sign', $params);
         $this->assertEquals('d3cb7fe11ecae942802ceeca67e7cf10120cc12f1517d45fbc1c8cfe5413c80f', $params['sign']);
+    }
+
+    public function testModifyRequestBeforeSend()
+    {
+        $request = new Request('GET', 'https://open-api.tiktokglobalshop.com/api/products/brands');
+
+        $this->client->setShopId('shop_id');
+        $this->client->setAccessToken('access_token');
+        $this->client->setShopCipher('shop_cipher');
+
+        $clientReflection = new ReflectionClass($this->client);
+        $modifyRequestMethod = $clientReflection->getMethod('modifyRequestBeforeSend');
+        $modifyRequestMethod->setAccessible(true);
+
+        $modifiedRequest = $modifyRequestMethod->invokeArgs($this->client, [$request]);
+        $modifiedRequestUri = $modifiedRequest->getUri();
+        parse_str($modifiedRequestUri->getQuery(), $query);
+
+        $this->assertArrayHasKey('app_key', $query);
+        $this->assertArrayHasKey('timestamp', $query);
+        $this->assertArrayHasKey('version', $query);
+        $this->assertArrayHasKey('sign', $query);
+        $this->assertArrayHasKey('shop_id', $query);
+        $this->assertArrayHasKey('access_token', $query);
+        $this->assertArrayHasKey('shop_cipher', $query);
+
+        // test for global product api
+        $globalProductRequest = new Request('GET', 'https://open-api.tiktokglobalshop.com/api/product/global_products/categories');
+        $modifiedGlobalProductRequest = $modifyRequestMethod->invokeArgs($this->client, [$globalProductRequest]);
+        $modifiedGlobalProductRequestUri = $modifiedGlobalProductRequest->getUri();
+        parse_str($modifiedGlobalProductRequestUri->getQuery(), $globalProductQuery);
+
+        $this->assertArrayNotHasKey('shop_cipher', $globalProductQuery);
     }
 }
