@@ -63,6 +63,7 @@ class Client
      * @see https://docs.guzzlephp.org/en/stable/request-options.html
      */
     protected $options;
+    protected $proxy;
 
     public const resources = [
         Shop::class,
@@ -78,7 +79,7 @@ class Client
         Supplychain::class,
     ];
 
-    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = self::DEFAULT_VERSION, $options = [])
+    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = self::DEFAULT_VERSION, $options = [], $proxy = null)
     {
         $this->app_key = $app_key;
         $this->app_secret = $app_secret;
@@ -86,6 +87,7 @@ class Client
         $this->sandbox = $sandbox;
         $this->version = $version;
         $this->options = $options;
+        $this->proxy = $proxy;
     }
 
     public function useSandboxMode()
@@ -188,7 +190,9 @@ class Client
             'handler' => $stack,
             'base_uri' => 'https://'.$api_domain_endpoint.'/api/',
         ], $this->options ?? []);
-
+        if ($this->proxy) {
+            $options['proxy'] = $this->proxy;
+        }
         return new GuzzleHttpClient($options);
     }
 
@@ -250,5 +254,8 @@ class Client
 
         return $resource;
     }
-
+    public function setProxy($proxy)
+    {
+        $this->proxy = $proxy;
+    }
 }
