@@ -16,22 +16,22 @@ use NVuln\TiktokShop\Resource;
 class Order extends Resource
 {
     // order status
-    public const STATUS_UNPAID = 100;
-    public const STATUS_AWAITING_SHIPMENT = 111;
-    public const STATUS_AWAITING_COLLECTION = 112;
-    public const STATUS_PARTIALLY_SHIPPING = 114;
-    public const STATUS_IN_TRANSIT = 121;
-    public const STATUS_DELIVERED = 122;
-    public const STATUS_COMPLETED = 130;
-    public const STATUS_CANCELLED = 140;
+    public const STATUS_UNPAID = 'UNPAID';
+    public const STATUS_AWAITING_SHIPMENT = 'AWAITING_SHIPMENT';
+    public const STATUS_AWAITING_COLLECTION = 'AWAITING_COLLECTION';
+    public const STATUS_PARTIALLY_SHIPPING = 'PARTIALLY_SHIPPING';
+    public const STATUS_IN_TRANSIT = 'IN_TRANSIT';
+    public const STATUS_DELIVERED = 'DELIVERED';
+    public const STATUS_COMPLETED = 'COMPLETED';
+    public const STATUS_CANCELLED = 'CANCELLED';
 
-    protected $category = 'orders';
+    protected $category = 'order';
 
-    public function getOrderDetail($order_id_list = [])
+    public function getOrderDetail($ids = [])
     {
-        return $this->call('POST', 'detail/query', [
-            RequestOptions::JSON => [
-                'order_id_list' => static::dataTypeCast('array', $order_id_list),
+        return $this->call('GET', 'orders', [
+            RequestOptions::QUERY => [
+                'ids' => static::dataTypeCast('array', $ids),
             ]
         ]);
     }
@@ -39,10 +39,10 @@ class Order extends Resource
     public function getOrderList($params = [])
     {
         $params = array_merge([
-            'page_size' => 20,
+            'page_size' => 20, // required
         ], $params);
 
-        return $this->call('POST', 'search', [
+        return $this->call('POST', 'orders/search', [
             RequestOptions::JSON => $params,
         ]);
     }
