@@ -12,11 +12,14 @@ namespace NVuln\TiktokShop\Tests\Resources;
 
 use NVuln\TiktokShop\Tests\TestResource;
 
+/**
+ * @property-read \NVuln\TiktokShop\Resources\Supplychain $caller
+ */
 class SupplychainTest extends TestResource
 {
-    public function testPackageFulfillmentDataSync()
+    public function testConfirmPackageShipment()
     {
-        $this->caller->packageFulfillmentDataSync(1, []);
-        $this->assertPreviousRequest('POST', 'supply_chain/package_shipment_confirmation');
+        $this->caller->confirmPackageShipment(1, []);
+        $this->assertPreviousRequest('POST', 'supply_chain/'.TestResource::TEST_API_VERSION.'/packages/sync');
     }
 }
