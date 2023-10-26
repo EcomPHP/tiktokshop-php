@@ -17,90 +17,64 @@ class Promotion extends Resource
 {
     protected $category = 'promotion';
 
-    public const STATUS_UPCOMING = 1;
-    public const STATUS_ONGOING = 2;
-    public const STATUS_EXPIRED = 3;
-    public const STATUS_DEACTIVATED = 4;
-
-    public function updateBasicInformation($request_serial_no, $promotion_id, $title, $begin_time = null, $end_time = null)
+    public function createActivity($title, $type, $begin_time, $end_time, $product_level)
     {
-        return $this->call('POST', 'activity/update', [
+        return $this->call('POST', 'activities', [
             RequestOptions::JSON => [
-                'promotion_id' => $promotion_id,
-                'request_serial_no' => $request_serial_no,
                 'title' => $title,
-                'begin_time' => static::dataTypeCast('timestamp', $begin_time),
-                'end_time' => static::dataTypeCast('timestamp', $end_time),
+                'activity_type' => $type,
+                'begin_time' => $begin_time,
+                'end_time' => $end_time,
+                'product_level' => $product_level,
             ]
         ]);
     }
 
-    public function getPromotionList($params = [])
+    public function updateActivityProduct($activity_id, $products)
     {
-        $params = array_merge([
-            'offset' => 0,
-            'limit' => 20,
-            'status' => static::STATUS_UPCOMING, // upcoming
-        ], $params);
-
-        return $this->call('POST', 'activity/list', [
-            RequestOptions::JSON => $params
-        ]);
-    }
-
-    public function deactivatePromotion($request_serial_no, $promotion_id)
-    {
-        return $this->call('POST', 'activity/deactivate', [
+        return $this->call('PUT', 'activities/'.$activity_id.'/products', [
             RequestOptions::JSON => [
-                'promotion_id' => $promotion_id,
-                'request_serial_no' => $request_serial_no,
+                'products' => $products,
+                'activity_id' => $activity_id,
             ]
         ]);
     }
 
-    public function removePromotionItem($request_serial_no, $promotion_id, $spu_list = [], $sku_list = [])
+    public function removeActivityProduct($activity_id, $product_ids = [], $sku_ids = [])
     {
-        return $this->call('POST', 'activity/items/remove', [
+        return $this->call('DELETE', 'activities/'.$activity_id.'/products', [
             RequestOptions::JSON => [
-                'promotion_id' => $promotion_id,
-                'request_serial_no' => $request_serial_no,
-                'sku_list' => static::dataTypeCast('array', $sku_list),
-                'spu_list' => static::dataTypeCast('array', $spu_list),
+                'product_ids' => $product_ids,
+                'sku_ids' => $sku_ids,
             ]
         ]);
     }
 
-    public function getPromotionDetail($promotion_id)
+    public function searchActivities($params = [])
     {
-        return $this->call('GET', 'activity/get', [
-            RequestOptions::QUERY => [
-                'promotion_id' => static::dataTypeCast('string', $promotion_id),
-            ]
+        return $this->call('POST', 'activities/search', [
+            RequestOptions::JSON => $params,
         ]);
     }
 
-    public function addOrUpdateDiscountItem($request_serial_no, $promotion_id, $product_list)
+    public function getActivity($activity_id)
     {
-        return $this->call('POST', 'activity/items/addorupdate', [
+        return $this->call('GET', 'activities/'.$activity_id);
+    }
+
+    public function updateActivity($activity_id, $title, $begin_time, $end_time)
+    {
+        return $this->call('PUT', 'activities/'.$activity_id, [
             RequestOptions::JSON => [
-                'promotion_id' => $promotion_id,
-                'request_serial_no' => $request_serial_no,
-                'product_list' => static::dataTypeCast('array', $product_list),
-            ]
-        ]);
-    }
-
-    public function addPromotion($request_serial_no, $title, $begin_time = null, $end_time = null, $product_type = 1, $promotion_type = 1)
-    {
-        return $this->call('POST', 'activity/create', [
-            RequestOptions::JSON => [
-                'request_serial_no' => $request_serial_no,
                 'title' => $title,
-                'begin_time' => static::dataTypeCast('timestamp', $begin_time),
-                'end_time' => static::dataTypeCast('timestamp', $end_time),
-                'product_type' => $product_type,
-                'promotion_type' => $promotion_type,
+                'begin_time' => $begin_time,
+                'end_time' => $end_time,
             ]
         ]);
+    }
+
+    public function deactivateActivity($activity_id)
+    {
+        return $this->call('POST', 'activities/'.$activity_id.'/deactivate');
     }
 }

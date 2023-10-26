@@ -2,7 +2,7 @@
 /*
  * This file is part of tiktokshop-client.
  *
- * (c) Jin <j@sax.vn>
+ * Copyright (c) 2023 Jin <j@sax.vn> All rights reserved.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,48 +12,56 @@ namespace NVuln\TiktokShop\Tests\Resources;
 
 use NVuln\TiktokShop\Tests\TestResource;
 
+/**
+ * @property-read \NVuln\TiktokShop\Resources\Promotion $caller
+ */
 class PromotionTest extends TestResource
 {
 
-    public function testAddOrUpdateDiscountItem()
+    public function testSearchActivities()
     {
-        $this->caller->addOrUpdateDiscountItem('request serial no', 'id', []);
-        $this->assertPreviousRequest('POST', 'promotion/activity/items/addorupdate');
+        $this->caller->searchActivities();
+        $this->assertPreviousRequest('POST', 'promotion/'.TestResource::TEST_API_VERSION.'/activities/search');
     }
 
-    public function testAddPromotion()
+    public function testGetActivity()
     {
-        $this->caller->addPromotion('request serial no', 1, 'title');
-        $this->assertPreviousRequest('POST', 'promotion/activity/create');
+        $activity_id = 1009;
+        $this->caller->getActivity($activity_id);
+        $this->assertPreviousRequest('GET', 'promotion/'.TestResource::TEST_API_VERSION.'/activities/'.$activity_id);
     }
 
-    public function testGetPromotionList()
+    public function testUpdateActivity()
     {
-        $this->caller->getPromotionList();
-        $this->assertPreviousRequest('POST', 'promotion/activity/list');
+        $activity_id = 1009;
+        $this->caller->updateActivity($activity_id, 'test title', 'begin time', 'end time');
+        $this->assertPreviousRequest('PUT', 'promotion/'.TestResource::TEST_API_VERSION.'/activities/'.$activity_id);
     }
 
-    public function testGetPromotionDetail()
+    public function testDeactivateActivity()
     {
-        $this->caller->getPromotionDetail(1);
-        $this->assertPreviousRequest('GET', 'promotion/activity/get');
+        $activity_id = 1009;
+        $this->caller->deactivateActivity($activity_id);
+        $this->assertPreviousRequest('POST', 'promotion/'.TestResource::TEST_API_VERSION.'/activities/'.$activity_id.'/deactivate');
     }
 
-    public function testUpdateBasicInformation()
+    public function testUpdateActivityProduct()
     {
-        $this->caller->updateBasicInformation('request serial no', 1, 'title');
-        $this->assertPreviousRequest('POST', 'promotion/activity/update');
+        $activity_id = 1009;
+        $this->caller->updateActivityProduct($activity_id, []);
+        $this->assertPreviousRequest('PUT', 'promotion/'.TestResource::TEST_API_VERSION.'/activities/'.$activity_id.'/products');
     }
 
-    public function testDeactivatePromotion()
+    public function testCreateActivity()
     {
-        $this->caller->deactivatePromotion('request serial no', 1);
-        $this->assertPreviousRequest('POST', 'promotion/activity/deactivate');
+        $this->caller->createActivity('test title', 'test type', 'begin time', 'end time', 'product level');
+        $this->assertPreviousRequest('POST', 'promotion/'.TestResource::TEST_API_VERSION.'/activities');
     }
 
-    public function testRemovePromotionItem()
+    public function testRemoveActivityProduct()
     {
-        $this->caller->removePromotionItem('request serial no', 'id');
-        $this->assertPreviousRequest('POST', 'promotion/activity/items/remove');
+        $activity_id = 1009;
+        $this->caller->removeActivityProduct($activity_id);
+        $this->assertPreviousRequest('DELETE', 'promotion/'.TestResource::TEST_API_VERSION.'/activities/'.$activity_id.'/products');
     }
 }
