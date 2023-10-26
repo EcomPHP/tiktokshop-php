@@ -47,7 +47,7 @@ class FulfillmentTest extends TestResource
     public function testSearchPackage()
     {
         $this->caller->searchPackage();
-        $this->assertPreviousRequest('GET', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages/search');
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages/search');
     }
 
     public function testCombinePackage()
@@ -146,6 +146,6 @@ class FulfillmentTest extends TestResource
     {
         $order_id = 100005;
         $this->caller->getEligibleShippingService($order_id);
-        $this->assertPreviousRequest('GET', 'fulfillment/'.TestResource::TEST_API_VERSION.'/orders/'.$order_id.'/shipping_services/query');
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/orders/'.$order_id.'/shipping_services/query');
     }
 }
