@@ -10,60 +10,29 @@
 
 namespace NVuln\TiktokShop\Resources;
 
-use GuzzleHttp\RequestOptions;
 use NVuln\TiktokShop\Resource;
 
 class Logistic extends Resource
 {
     protected $category = 'logistics';
 
-    public function getSubscribedDeliveryOptions($warehouse_id_list = [])
+    public function getWarehouseDeliveryOptions($warehouse_id)
     {
-        return $this->call('POST', 'get_subscribed_deliveryoptions', [
-            RequestOptions::JSON => [
-                'warehouse_id_list' => static::dataTypeCast('array', $warehouse_id_list),
-            ],
-        ]);
+        return $this->call('GET', 'warehouses/'.$warehouse_id.'/delivery_options');
     }
 
-    public function updateShippingInfo($order_id, $tracking_number, $provider_id)
+    public function getShippingProvider($delivery_option_id)
     {
-        return $this->call('POST', 'tracking', [
-            RequestOptions::JSON => [
-                'order_id' => $order_id,
-                'tracking_number' => $tracking_number,
-                'provider_id' => $provider_id,
-            ]
-        ]);
-    }
-
-    public function getShippingDocument($order_id, $document_type, $document_size = 'A6')
-    {
-        return $this->call('GET', 'shipping_document', [
-            RequestOptions::QUERY => [
-                'order_id' => $order_id,
-                'document_type' => $document_type,
-                'document_size' => $document_size,
-            ]
-        ]);
-    }
-
-    public function getShippingProvider()
-    {
-        return $this->call('GET','shipping_providers');
-    }
-
-    public function getShippingInfo($order_id)
-    {
-        return $this->call('GET', 'ship/get', [
-            RequestOptions::QUERY => [
-                'order_id' => $order_id,
-            ]
-        ]);
+        return $this->call('GET','delivery_options/'.$delivery_option_id.'/shipping_providers');
     }
 
     public function getWarehouseList()
     {
-        return $this->call('GET', 'get_warehouse_list');
+        return $this->call('GET', 'warehouses');
+    }
+
+    public function getGlobalSellerWarehouse()
+    {
+        return $this->call('GET', 'global_warehouses');
     }
 }
