@@ -71,7 +71,6 @@ class Client
         Order::class,
         Fulfillment::class,
         Logistic::class,
-        Reverse::class,
         Finance::class,
         GlobalProduct::class,
         Promotion::class,
