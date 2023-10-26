@@ -23,6 +23,7 @@ use NVuln\TiktokShop\Resources\Logistic;
 use NVuln\TiktokShop\Resources\Order;
 use NVuln\TiktokShop\Resources\Product;
 use NVuln\TiktokShop\Resources\Promotion;
+use NVuln\TiktokShop\Resources\ReturnRefund;
 use NVuln\TiktokShop\Resources\Reverse;
 use NVuln\TiktokShop\Resources\Seller;
 use NVuln\TiktokShop\Resources\Authorization;
@@ -77,6 +78,7 @@ class Client
         Promotion::class,
         Supplychain::class,
         Event::class,
+        ReturnRefund::class,
     ];
 
     public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = self::DEFAULT_VERSION, $options = [])
