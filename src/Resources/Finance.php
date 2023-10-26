@@ -15,7 +15,7 @@ use NVuln\TiktokShop\Resource;
 
 class Finance extends Resource
 {
-    protected $prefix = 'finance';
+    protected $category = 'finance';
 
     public function getSettlements($params = [])
     {

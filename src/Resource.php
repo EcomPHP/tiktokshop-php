@@ -22,7 +22,9 @@ abstract class Resource
     /** @var Client */
     protected $httpClient;
 
-    protected $prefix = '';
+    protected $category = '';
+
+    protected $version = TiktokShopClient::DEFAULT_VERSION;
 
     protected $last_message = null;
 

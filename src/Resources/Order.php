@@ -25,7 +25,7 @@ class Order extends Resource
     public const STATUS_COMPLETED = 130;
     public const STATUS_CANCELLED = 140;
 
-    protected $prefix = 'orders';
+    protected $category = 'orders';
 
     public function getOrderDetail($order_id_list = [])
     {

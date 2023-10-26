@@ -14,7 +14,7 @@ use NVuln\TiktokShop\Resource;
 
 class Shop extends Resource
 {
-    protected $prefix = 'shop';
+    protected $category = 'shop';
 
     public function getAuthorizedShop()
     {

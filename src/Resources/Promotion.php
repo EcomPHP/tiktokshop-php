@@ -15,7 +15,7 @@ use NVuln\TiktokShop\Resource;
 
 class Promotion extends Resource
 {
-    protected $prefix = 'promotion';
+    protected $category = 'promotion';
 
     public const STATUS_UPCOMING = 1;
     public const STATUS_ONGOING = 2;

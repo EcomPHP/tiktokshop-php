@@ -15,7 +15,7 @@ use NVuln\TiktokShop\Resource;
 
 class Reverse extends Resource
 {
-    protected $prefix = 'reverse';
+    protected $category = 'reverse';
 
     public function getRejectReasonList($params = [])
     {

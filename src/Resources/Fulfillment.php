@@ -16,7 +16,7 @@ use SplFileInfo;
 
 class Fulfillment extends Resource
 {
-    protected $prefix = 'fulfillment';
+    protected $category = 'fulfillment';
 
     /**
      * VerifyOrderSplit: Use this interface to verify if the order can be split
