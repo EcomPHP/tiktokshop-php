@@ -12,18 +12,21 @@ namespace NVuln\TiktokShop\Tests\Resources;
 
 use NVuln\TiktokShop\Tests\TestResource;
 
+/**
+ * @property-read \NVuln\TiktokShop\Resources\Seller $caller
+ */
 class SellerTest extends TestResource
 {
 
     public function testGetActiveShopList()
     {
         $this->caller->getActiveShopList();
-        $this->assertPreviousRequest('GET', 'seller/global/active_shops');
+        $this->assertPreviousRequest('GET', 'seller/'.TestResource::TEST_API_VERSION.'/shops');
     }
 
-    public function testCheckGlobalProductMode()
+    public function testGetSellerPermissions()
     {
-        $this->caller->checkGlobalProductMode();
-        $this->assertPreviousRequest('GET', 'seller/manage_global_product/check');
+        $this->caller->getSellerPermissions();
+        $this->assertPreviousRequest('GET', 'seller/'.TestResource::TEST_API_VERSION.'/permissions');
     }
 }

@@ -18,11 +18,11 @@ class Seller extends Resource
 
     public function getActiveShopList()
     {
-        return $this->call('GET', 'global/active_shops');
+        return $this->call('GET', 'shops');
     }
 
-    public function checkGlobalProductMode()
+    public function getSellerPermissions()
     {
-        return $this->call('GET', 'manage_global_product/check');
+        return $this->call('GET', 'permissions');
     }
 }
