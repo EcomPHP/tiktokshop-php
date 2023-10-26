@@ -2,7 +2,7 @@
 /*
  * This file is part of tiktokshop-client.
  *
- * (c) Jin <j@sax.vn>
+ * Copyright (c) 2023 Jin <j@sax.vn> All rights reserved.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,139 +10,139 @@
 
 namespace NVuln\TiktokShop\Tests\Resources;
 
+use NVuln\TiktokShop\Resources\Product;
 use NVuln\TiktokShop\Tests\TestResource;
+use PHPUnit\Framework\TestCase;
 
+/**
+ * @property-read \NVuln\TiktokShop\Resources\Product $caller
+ */
 class ProductTest extends TestResource
 {
-    public function testCreateProduct()
-    {
-        $this->caller->createProduct([]);
-        $this->assertPreviousRequest('POST', 'products');
-    }
 
-    public function testCreateDraftProduct()
+    public function testDeactivateProducts()
     {
-        $this->caller->createDraftProduct([]);
-        $this->assertPreviousRequest('POST', 'products/save_draft');
-    }
-
-    public function testGetProductList()
-    {
-        $this->caller->getProductList();
-        $this->assertPreviousRequest('POST', 'products/search');
-    }
-
-    public function testGetAttributes()
-    {
-        $this->caller->getAttributes(1);
-        $this->assertPreviousRequest('GET', 'products/attributes');
-    }
-
-    public function testDeactivateProduct()
-    {
-        $this->caller->deactivateProduct([]);
-        $this->assertPreviousRequest('POST', 'products/inactivated_products');
-    }
-
-    public function testActivateProduct()
-    {
-        $this->caller->activateProduct([]);
-        $this->assertPreviousRequest('POST', 'products/activate');
-    }
-
-    public function testRecoverDeletedProduct()
-    {
-        $this->caller->recoverDeletedProduct([]);
-        $this->assertPreviousRequest('POST', 'products/recover');
-    }
-
-    public function testGetCategories()
-    {
-        $this->caller->getCategories();
-        $this->assertPreviousRequest('GET', 'products/categories');
+        $this->caller->deactivateProducts([]);
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/products/deactivate');
     }
 
     public function testGetBrands()
     {
         $this->caller->getBrands([]);
-        $this->assertPreviousRequest('GET', 'products/brands');
+        $this->assertPreviousRequest('GET', 'product/'.TestResource::TEST_API_VERSION.'/brands');
     }
 
-    public function testCreateBrand()
+    public function testCreateProduct()
     {
-        $this->caller->createBrand('sample brand');
-        $this->assertPreviousRequest('POST', 'products/brand');
+        $this->caller->createProduct([]);
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/products');
     }
 
-    public function testDeleteProduct()
+    public function testSearchProducts()
     {
-        $this->caller->deleteProduct([]);
-        $this->assertPreviousRequest('DELETE', 'products');
+        $this->caller->searchProducts([]);
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/products/search');
     }
 
-    public function testUploadFile()
+    public function testGetAttributes()
     {
-        $this->caller->uploadFile('file content');
-        $this->assertPreviousRequest('POST', 'products/upload_files');
+        $this->caller->getAttributes(1009);
+        $this->assertPreviousRequest('GET', 'product/'.TestResource::TEST_API_VERSION.'/categories/1009/attributes');
     }
 
-    public function testUploadImage()
+    public function testUploadProductImage()
     {
-        $this->caller->uploadImage('file content');
-        $this->assertPreviousRequest('POST', 'products/upload_imgs');
+        $this->caller->uploadProductImage('image data');
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/images/upload');
     }
 
-    public function testGetProductDetail()
+    public function testGetProduct()
     {
-        $this->caller->getProductDetail(1);
-        $this->assertPreviousRequest('GET', 'products/details');
+        $this->caller->getProduct(1009);
+        $this->assertPreviousRequest('GET', 'product/'.TestResource::TEST_API_VERSION.'/products/1009');
+    }
+
+    public function testUploadProductFile()
+    {
+        $this->caller->uploadProductFile('file data');
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/files/upload');
+    }
+
+    public function testUpdateInventory()
+    {
+        $this->caller->updateInventory(1009, []);
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/products/1009/inventory/update');
+    }
+
+    public function testInventorySearch()
+    {
+        $this->caller->inventorySearch([]);
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/inventory/search');
+    }
+
+    public function testDeleteProducts()
+    {
+        $this->caller->deleteProducts([]);
+        $this->assertPreviousRequest('DELETE', 'product/'.TestResource::TEST_API_VERSION.'/products');
     }
 
     public function testEditProduct()
     {
-        $this->caller->editProduct(1, []);
-        $this->assertPreviousRequest('PUT', 'products');
+        $this->caller->editProduct(1009, []);
+        $this->assertPreviousRequest('PUT', 'product/'.TestResource::TEST_API_VERSION.'/products/1009');
     }
 
-    public function testUpdateStock()
+    public function testActivateProducts()
     {
-        $this->caller->updateStock(1, []);
-        $this->assertPreviousRequest('PUT', 'products/stocks');
+        $this->caller->activateProducts([]);
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/products/activate');
+    }
+
+    public function testPartialEditProduct()
+    {
+        $this->caller->partialEditProduct(1009, []);
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/products/1009/partial_edit');
+    }
+
+    public function testRecommendCategory()
+    {
+        $this->caller->recommendCategory([]);
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/categories/recommend');
+    }
+
+    public function testCheckListingPrerequisites()
+    {
+        $this->caller->checkListingPrerequisites([]);
+        $this->assertPreviousRequest('GET', 'product/'.TestResource::TEST_API_VERSION.'/prerequisites');
     }
 
     public function testUpdatePrice()
     {
-        $this->caller->updatePrice(1, []);
-        $this->assertPreviousRequest('PUT', 'products/prices');
+        $this->caller->updatePrice(1009, []);
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/products/1009/prices/update');
     }
 
-    public function testGetCategoryRule()
+    public function testGetCategoryRules()
     {
-        $this->caller->getCategoryRule(1);
-        $this->assertPreviousRequest('GET', 'products/categories/rules');
+        $this->caller->getCategoryRules(1009);
+        $this->assertPreviousRequest('GET', 'product/'.TestResource::TEST_API_VERSION.'/categories/1009/rules');
     }
 
-    public function testCategoryRecommended()
+    public function testGetCategories()
     {
-        $this->caller->categoryRecommended('product name', 'description');
-        $this->assertPreviousRequest('POST', 'product/category_recommend');
+        $this->caller->getCategories([]);
+        $this->assertPreviousRequest('GET', 'product/'.TestResource::TEST_API_VERSION.'/categories');
     }
 
-    public function testGetProductStock()
+    public function testRecoverProducts()
     {
-        $this->caller->getProductStock();
-        $request = $this->assertPreviousRequest('POST', 'products/stock/list');
-        parse_str($request->getUri()->getQuery(), $query);
-        $this->assertArrayHasKey('version', $query);
-        $this->assertTrue(intval($query['version']) >= 202305);
+        $this->caller->recoverProducts([]);
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/products/recover');
     }
 
-    public function testPrecheckForOperatingProduct()
+    public function testCreateCustomBrand()
     {
-        $this->caller->precheckForOperatingProduct([]);
-        $request = $this->assertPreviousRequest('POST', 'product/pre_check');
-        parse_str($request->getUri()->getQuery(), $query);
-        $this->assertArrayHasKey('version', $query);
-        $this->assertTrue(intval($query['version']) >= 202306);
+        $this->caller->createCustomBrand([]);
+        $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/brands');
     }
 }

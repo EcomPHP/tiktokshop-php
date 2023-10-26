@@ -15,84 +15,83 @@ use NVuln\TiktokShop\Resource;
 
 class GlobalProduct extends Resource
 {
-    protected $category = 'product/global_products';
+    protected $category = 'product';
 
-    public function createGlobalProduct($data = [])
+    public function createGlobalProduct($data)
     {
-        return $this->call('POST', '/', [
+        return $this->call('POST', 'global_products', [
             RequestOptions::JSON => $data,
         ]);
     }
 
-    public function getGlobalProductList($params = [])
+    public function getGlobalProduct($global_product_id)
     {
-        $params = array_merge([
-            'page_size' => 20,
-            'page_number' => 1,
-        ], $params);
+        return $this->call('GET', 'global_products/'.$global_product_id);
+    }
 
-        return $this->call('POST', 'search', [
-            RequestOptions::JSON => $params,
+    public function publishGlobalProduct($global_product_id, $params = [])
+    {
+        return $this->call('POST', 'global_products/'.$global_product_id.'/publish', [
+            RequestOptions::JSON => $params
         ]);
     }
 
-    public function getGlobalProductDetail($product_id)
+    public function getGlobalCategories($params = [])
     {
-        return $this->call('GET', '/', [
-            RequestOptions::QUERY => [
-                'product_id' => $product_id,
-            ]
+        return $this->call('GET', 'global_categories', [
+            RequestOptions::QUERY => $params,
         ]);
-    }
-
-    public function publishGlobalProduct($global_product_id, $publishable_shops)
-    {
-        return $this->call('POST', 'publish', [
-            RequestOptions::JSON => [
-                'global_product_id' => $global_product_id,
-                'publishable_shops' => $publishable_shops,
-            ]
-        ]);
-    }
-
-    public function updateGlobalProductPrice($global_product_id, $skus)
-    {
-        return $this->call('PUT', 'prices', [
-            RequestOptions::JSON => [
-                'global_product_id' => $global_product_id,
-                'skus' => $skus,
-            ]
-        ]);
-    }
-
-    public function getGlobalCategories()
-    {
-        return $this->call('GET', 'categories');
     }
 
     public function editGlobalProduct($global_product_id, $data = [])
     {
-        $data['global_product_id'] = $global_product_id;
-
-        return $this->call('PUT', '/', [
+        return $this->call('PUT', 'global_products/'.$global_product_id, [
             RequestOptions::JSON => $data
         ]);
     }
 
-    public function getGlobalAttributes($category_id)
+    public function getGlobalAttributes($category_id, $params = [])
     {
-        return $this->call('GET', 'attributes', [
-            RequestOptions::QUERY => [
-                'category_id' => $category_id,
-            ]
+        return $this->call('GET', 'categories/'.$category_id.'/global_attributes', [
+            RequestOptions::QUERY => $params
         ]);
     }
 
-    public function getGlobalCategoryRule($category_id)
+    public function getGlobalCategoryRules($category_id)
     {
-        return $this->call('GET', 'categories/rules', [
-            RequestOptions::QUERY => [
-                'category_id' => $category_id,
+        return $this->call('GET', 'categories/'.$category_id.'/global_rules');
+    }
+
+    public function recommendGlobalCategories($params = [])
+    {
+        return $this->call('POST', 'global_categories/recommend', [
+            RequestOptions::JSON => $params
+        ]);
+    }
+
+    public function updateGlobalInventory($global_product_id, $params = [])
+    {
+        return $this->call('POST', 'global_products/'.$global_product_id.'/inventory/update', [
+            RequestOptions::JSON => $params
+        ]);
+    }
+
+    public function searchGlobalProducts($params = [])
+    {
+        $params = array_merge([
+            'page_size' => 20,
+        ], $params);
+
+        return $this->call('POST', 'global_products/search', [
+            RequestOptions::JSON => $params
+        ]);
+    }
+
+    public function deleteGlobalProducts($global_product_ids)
+    {
+        return $this->call('DELETE', 'global_products', [
+            RequestOptions::JSON => [
+                'global_product_ids' => $global_product_ids,
             ]
         ]);
     }
