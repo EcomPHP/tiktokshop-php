@@ -14,7 +14,7 @@ use NVuln\TiktokShop\Resource;
 
 class Seller extends Resource
 {
-    protected $prefix = 'seller';
+    protected $category = 'seller';
 
     public function getActiveShopList()
     {

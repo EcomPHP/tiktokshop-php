@@ -15,7 +15,7 @@ use NVuln\TiktokShop\Resource;
 
 class GlobalProduct extends Resource
 {
-    protected $prefix = 'product/global_products';
+    protected $category = 'product/global_products';
 
     public function createGlobalProduct($data = [])
     {

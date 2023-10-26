@@ -15,7 +15,7 @@ use NVuln\TiktokShop\Resource;
 
 class Logistic extends Resource
 {
-    protected $prefix = 'logistics';
+    protected $category = 'logistics';
 
     public function getSubscribedDeliveryOptions($warehouse_id_list = [])
     {
