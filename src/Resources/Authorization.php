@@ -12,12 +12,12 @@ namespace NVuln\TiktokShop\Resources;
 
 use NVuln\TiktokShop\Resource;
 
-class Shop extends Resource
+class Authorization extends Resource
 {
-    protected $category = 'shop';
+    protected $category = 'authorization';
 
     public function getAuthorizedShop()
     {
-        return $this->call('GET', 'get_authorized_shop');
+        return $this->call('GET', 'shops');
     }
 }

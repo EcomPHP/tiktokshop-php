@@ -24,12 +24,12 @@ use NVuln\TiktokShop\Resources\Product;
 use NVuln\TiktokShop\Resources\Promotion;
 use NVuln\TiktokShop\Resources\Reverse;
 use NVuln\TiktokShop\Resources\Seller;
-use NVuln\TiktokShop\Resources\Shop;
+use NVuln\TiktokShop\Resources\Authorization;
 use NVuln\TiktokShop\Resources\Supplychain;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * @property-read Shop $Shop
+ * @property-read Authorization $Shop
  * @property-read Seller $Seller
  * @property-read Product $Product
  * @property-read Order $Order
@@ -65,7 +65,7 @@ class Client
     protected $options;
 
     public const resources = [
-        Shop::class,
+        Authorization::class,
         Seller::class,
         Product::class,
         Order::class,
