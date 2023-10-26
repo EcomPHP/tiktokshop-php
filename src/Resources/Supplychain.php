@@ -15,9 +15,11 @@ use NVuln\TiktokShop\Resource;
 
 class Supplychain extends Resource
 {
-    public function packageFulfillmentDataSync($warehouse_provider_id, $package)
+    protected $category = 'supply_chain';
+
+    public function confirmPackageShipment($warehouse_provider_id, $package)
     {
-        return $this->call('POST', 'supply_chain/package_shipment_confirmation', [
+        return $this->call('POST', 'packages/sync', [
             RequestOptions::JSON => [
                 'warehouse_provider_id' => $warehouse_provider_id,
                 'package' => $package,
