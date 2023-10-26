@@ -15,6 +15,7 @@ use GuzzleHttp\Client as GuzzleHttpClient;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\RequestOptions;
 use NVuln\TiktokShop\Errors\TiktokShopException;
+use NVuln\TiktokShop\Resources\Event;
 use NVuln\TiktokShop\Resources\Finance;
 use NVuln\TiktokShop\Resources\Fulfillment;
 use NVuln\TiktokShop\Resources\GlobalProduct;
@@ -75,6 +76,7 @@ class Client
         GlobalProduct::class,
         Promotion::class,
         Supplychain::class,
+        Event::class,
     ];
 
     public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = self::DEFAULT_VERSION, $options = [])
