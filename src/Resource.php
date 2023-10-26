@@ -114,7 +114,7 @@ abstract class Resource
             case 'integer':
                 return intval($data);
             case 'array':
-                return is_array($data) ? $data : [$data];
+                return implode(',', is_array($data) ? $data : [$data]);
             case 'bool':
             case 'boolean':
                 return boolval($data);

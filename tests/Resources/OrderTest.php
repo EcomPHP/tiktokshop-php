@@ -12,17 +12,20 @@ namespace NVuln\TiktokShop\Tests\Resources;
 
 use NVuln\TiktokShop\Tests\TestResource;
 
+/**
+ * @property-read \NVuln\TiktokShop\Resources\Order $caller
+ */
 class OrderTest extends TestResource
 {
     public function testGetOrderDetail()
     {
         $this->caller->getOrderDetail('sample order id');
-        $this->assertPreviousRequest('post', 'orders/detail/query');
+        $this->assertPreviousRequest('get', 'order/'.TestResource::TEST_API_VERSION.'/orders');
     }
 
     public function testGetOrderList()
     {
         $this->caller->getOrderList();
-        $this->assertPreviousRequest('post', 'orders/search');
+        $this->assertPreviousRequest('post', 'order/'.TestResource::TEST_API_VERSION.'/orders/search');
     }
 }
