@@ -12,12 +12,12 @@ namespace NVuln\TiktokShop\Tests\Resources;
 
 use NVuln\TiktokShop\Tests\TestResource;
 
-class ShopTest extends TestResource
+class AuthorizationTest extends TestResource
 {
 
     public function testGetAuthorizedShop()
     {
         $this->caller->getAuthorizedShop();
-        $this->assertPreviousRequest('GET', 'shop/get_authorized_shop');
+        $this->assertPreviousRequest('GET', 'authorization/'.TestResource::TEST_API_VERSION.'/shops');
     }
 }
