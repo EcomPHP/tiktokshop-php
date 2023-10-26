@@ -21,6 +21,8 @@ use NVuln\TiktokShop\Client as TiktokApiClient;
 
 abstract class TestResource extends TestCase
 {
+    public const TEST_API_VERSION = '202309';
+
     protected $caller;
 
     public static $container = [];
@@ -46,6 +48,7 @@ abstract class TestResource extends TestCase
         ]);
 
         $this->caller = $client->{$resourceName};
+        $this->caller->useVersion(self::TEST_API_VERSION);
         $this->caller->useHttpClient($httpClient);
     }
 
