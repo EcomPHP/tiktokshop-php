@@ -141,10 +141,9 @@ class ClientTest extends TestCase
 
         $this->assertArrayHasKey('app_key', $query);
         $this->assertArrayHasKey('timestamp', $query);
-        $this->assertArrayHasKey('version', $query);
         $this->assertArrayHasKey('sign', $query);
         $this->assertArrayHasKey('shop_id', $query);
-        $this->assertArrayHasKey('access_token', $query);
+        $this->assertArrayHasKey('x-tts-access-token', $query);
         $this->assertArrayHasKey('shop_cipher', $query);
 
         // test for global product api
