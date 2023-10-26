@@ -125,7 +125,7 @@ class ClientTest extends TestCase
 
     public function testModifyRequestBeforeSend()
     {
-        $request = new Request('GET', 'https://open-api.tiktokglobalshop.com/api/products/brands');
+        $request = new Request('GET', 'https://open-api.tiktokglobalshop.com/product/202309/products');
 
         $this->client->setShopId('shop_id');
         $this->client->setAccessToken('access_token');
@@ -147,7 +147,7 @@ class ClientTest extends TestCase
         $this->assertArrayHasKey('shop_cipher', $query);
 
         // test for global product api
-        $globalProductRequest = new Request('GET', 'https://open-api.tiktokglobalshop.com/api/product/global_products/categories');
+        $globalProductRequest = new Request('GET', 'https://open-api.tiktokglobalshop.com/product/202309/global_products/1231/inventory/update');
         $modifiedGlobalProductRequest = $modifyRequestMethod->invokeArgs($this->client, [$globalProductRequest]);
         $modifiedGlobalProductRequestUri = $modifiedGlobalProductRequest->getUri();
         parse_str($modifiedGlobalProductRequestUri->getQuery(), $globalProductQuery);

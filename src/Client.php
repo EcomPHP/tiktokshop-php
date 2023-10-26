@@ -160,7 +160,7 @@ class Client
         }
 
         // do not pass shop_cipher to global product api
-        if (preg_match('/^\/api\/product\/global_products/', $uri->getPath())) {
+        if (preg_match('/^\/product\/(\d{6})\/global_products/', $uri->getPath())) {
             unset($query['shop_cipher']);
         }
 
