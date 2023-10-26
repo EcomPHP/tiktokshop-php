@@ -18,72 +18,43 @@ class Fulfillment extends Resource
 {
     protected $category = 'fulfillment';
 
-    /**
-     * VerifyOrderSplit: Use this interface to verify if the order can be split
-     */
-    public function verifyOrderSplit($order_id_list = [])
-    {
-        return $this->call('POST', 'order_split/verify', [
-            RequestOptions::JSON => [
-                'order_id_list' => static::dataTypeCast('array', $order_id_list),
-            ]
-        ]);
-    }
-
-    /**
-     * Confirm order split,use this API to split order.
-     */
-    public function confirmOrderSplit($order_id, $split_group)
-    {
-        return $this->call('POST', 'order_split/confirm', [
-            RequestOptions::JSON => [
-                'order_id' => $order_id,
-                'split_group' => $split_group,
-            ]
-        ]);
-    }
-
-    /**
-     * Get a list of all orders that can be "combined" by the current seller
-     */
-    public function searchPreCombinePackage($params = [])
+    public function searchCombinablePackages($params = [])
     {
         $params = array_merge([
             'page_size' => 20,
         ], $params);
 
-        return $this->call('GET', 'pre_combine_pkg/list', [
+        return $this->call('GET', 'combinable_packages/search', [
             RequestOptions::QUERY => $params
         ]);
     }
 
     public function getPackageShippingDocument($package_id, $document_type, $document_size = 0)
     {
-        return $this->call('GET', 'shipping_document', [
+        return $this->call('GET', 'packages/'.$package_id.'/shipping_documents', [
             RequestOptions::QUERY => [
-                'package_id' => $package_id,
                 'document_type' => $document_type,
                 'document_size' => $document_size,
             ]
         ]);
     }
 
-    public function updatePackageShippingInfo($package_id, $tracking_number, $provider_id)
+    public function getPackageHandoverTimeSlots($package_id)
     {
-        return $this->call('POST', 'shipping_info/update', [
-            RequestOptions::JSON => [
-                'package_id' => $package_id,
-                'tracking_number' => $tracking_number,
-                'provider_id' => $provider_id,
-            ]
-        ]);
+        return $this->call('GET', 'packages/'.$package_id.'/handover_time_slots');
     }
 
-    public function getPackageShippingInfo($package_id)
+    public function getTracking($order_id)
     {
-        return $this->call('GET', 'shipping_info', [
-            RequestOptions::QUERY => [
-                'package_id' => $package_id,
+        return $this->call('GET', 'orders/'.$order_id.'/tracking');
+    }
+
+    public function updatePackageShippingInfo($package_id, $tracking_number, $shipping_provider_id)
+    {
+        return $this->call('POST', 'packages/'.$package_id.'/shipping_info/update', [
+            RequestOptions::JSON => [
+                'tracking_number' => $tracking_number,
+                'shipping_provider_id' => $shipping_provider_id,
             ]
         ]);
     }
@@ -94,101 +65,138 @@ class Fulfillment extends Resource
             'page_size' => 20,
         ], $params);
 
-        return $this->call('POST', 'search', [
+        return $this->call('POST', 'packages/search', [
             RequestOptions::JSON => $params,
         ]);
     }
 
-    public function shipPackage($package_id, $pick_up_type = 1, $pick_up = [], $self_shipment = [])
+    public function shipPackage($package_id, $handover_method = 'PICKUP', $pickup_slot = [], $self_shipment = [])
     {
-        return $this->call('POST', 'rts', [
+        return $this->call('POST', 'packages/'.$package_id.'/ship', [
             RequestOptions::JSON => [
-                'package_id' => $package_id,
-                'pick_up_type' => $pick_up_type,
-                'pick_up' => $pick_up,
+                'handover_method' => $handover_method,
+                'pickup_slot' => $pickup_slot,
                 'self_shipment' => $self_shipment,
             ]
         ]);
     }
 
-    public function getPackagePickupConfig($package_id)
-    {
-        return $this->call('GET', 'package_pickup_config/list', [
-            RequestOptions::QUERY => [
-                'package_id' => $package_id,
-            ]
-        ]);
-    }
-
-    public function removePackageOrder($package_id, $order_id_list = [])
-    {
-        return $this->call('POST', 'package/remove', [
-            RequestOptions::JSON => [
-                'package_id' => $package_id,
-                'order_id_list' => static::dataTypeCast('array', $order_id_list),
-            ],
-        ]);
-    }
-
-    public function confirmPrecombinePackage($pre_combine_pkg_list = [])
-    {
-        return $this->call('POST', 'pre_combine_pkg/confirm', [
-            RequestOptions::JSON => [
-                'pre_combine_pkg_list' => static::dataTypeCast('array', $pre_combine_pkg_list),
-            ],
-        ]);
-    }
-
     public function getPackageDetail($package_id)
     {
-        return $this->call('GET', 'detail', [
-            RequestOptions::QUERY => [
-                'package_id' => $package_id,
-            ]
-        ]);
+        return $this->call('GET', 'packages/'.$package_id);
     }
 
-    public function fulfillmentUploadImage($image, $scene = 0 /* UNSPECIFIED */)
+    public function fulfillmentUploadDeliveryImage($image)
     {
-        return $this->call('POST', 'uploadimage', [
+        return $this->call('POST', 'images/upload', [
             RequestOptions::JSON => [
-                'img_data' => static::dataTypeCast('image', $image),
-                'img_scene' => $scene,
+                'data' => static::dataTypeCast('image', $image),
             ]
         ]);
     }
 
-    public function fulfillmentUploadFile($file, $file_name = 'uploaded_file')
+    public function fulfillmentUploadDeliveryFile($file, $file_name = 'uploaded_file.pdf')
     {
         if ($file instanceof SplFileInfo) {
             $file_name = $file->getFilename();
         }
 
-        return $this->call('POST', 'uploadfile', [
+        return $this->call('POST', 'files/upload', [
             RequestOptions::JSON => [
-                'file_name' => $file_name,
-                'file_data' => static::dataTypeCast('file', $file),
+                'name' => $file_name,
+                'data' => static::dataTypeCast('file', $file),
             ]
         ]);
     }
 
-    public function updatePackageDeliveryStatus($delivery_packages = [])
+    public function updatePackageDeliveryStatus($packages = [])
     {
-        return $this->call('POST', 'delivery', [
+        return $this->call('POST', 'packages/deliver', [
             RequestOptions::JSON => [
-                'delivery_packages' => $delivery_packages,
+                'packages' => $packages,
             ],
         ]);
     }
 
-    /**
-     * Use this api to batch ship packages
-     */
-    public function batchShipPackages($package_list)
+    public function batchShipPackages($packages)
     {
-        return $this->call('POST', 'batch_rts', [
+        return $this->call('POST', 'packages/ship', [
             RequestOptions::JSON => [
-                'package_list' => static::dataTypeCast('array', $package_list),
+                'packages' => $packages,
+            ],
+        ]);
+    }
+
+    public function getOrderSplitAttributes($order_ids)
+    {
+        return $this->call('GET', 'orders/split_attributes', [
+            RequestOptions::QUERY => [
+                'order_ids' => static::dataTypeCast('array', $order_ids),
+            ],
+        ]);
+    }
+
+    public function splitOrders($order_id, $splittable_groups)
+    {
+        return $this->call('POST', 'orders/'.$order_id.'/split', [
+            RequestOptions::JSON => [
+                'order_id' => $order_id,
+                'splittable_groups' => static::dataTypeCast('array', $splittable_groups),
+            ],
+        ]);
+    }
+
+    public function combinePackage($combinable_packages)
+    {
+        return $this->call('POST', 'packages/combine', [
+            RequestOptions::JSON => [
+                'combinable_packages' => $combinable_packages,
+            ],
+        ]);
+    }
+
+    public function uncombinePackages($package_id, $order_ids = [])
+    {
+        return $this->call('POST', 'packages/'.$package_id.'/uncombine', [
+            RequestOptions::JSON => [
+                'order_ids' => $order_ids,
+            ],
+        ]);
+    }
+
+    public function markPackageAsShipped($order_id, $tracking_number, $shipping_provider_id, $order_line_item_ids = [])
+    {
+        return $this->call('POST', 'orders/'.$order_id.'/packages', [
+            RequestOptions::JSON => [
+                'tracking_number' => $tracking_number,
+                'shipping_provider_id' => $shipping_provider_id,
+                'order_line_item_ids' => $order_line_item_ids,
+            ],
+        ]);
+    }
+
+    public function getEligibleShippingService($order_id, $params = [])
+    {
+        return $this->call('POST', 'orders/'.$order_id.'/shipping_services/query', [
+            RequestOptions::JSON => $params,
+        ]);
+    }
+
+    public function createPackages($order_id, $params = [])
+    {
+        $params['order_id'] = $order_id;
+
+        return $this->call('POST', 'packages', [
+            RequestOptions::JSON => $params,
+        ]);
+    }
+
+    public function updateShippingInfo($order_id, $tracking_number, $shipping_provider_id)
+    {
+        return $this->call('POST', 'orders/'.$order_id.'/shipping_info/update', [
+            RequestOptions::JSON => [
+                'tracking_number' => $tracking_number,
+                'shipping_provider_id' => $shipping_provider_id,
             ],
         ]);
     }

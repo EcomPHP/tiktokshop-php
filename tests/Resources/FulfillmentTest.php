@@ -2,7 +2,7 @@
 /*
  * This file is part of tiktokshop-client.
  *
- * (c) Jin <j@sax.vn>
+ * Copyright (c) 2023 Jin <j@sax.vn> All rights reserved.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,102 +12,140 @@ namespace NVuln\TiktokShop\Tests\Resources;
 
 use NVuln\TiktokShop\Tests\TestResource;
 
+/**
+ * @property-read \NVuln\TiktokShop\Resources\Fulfillment $caller
+ */
 class FulfillmentTest extends TestResource
 {
 
-    public function testConfirmOrderSplit()
+    public function testGetPackageShippingDocument()
     {
-        $this->caller->confirmOrderSplit(1, []);
-        $this->assertPreviousRequest('POST', 'fulfillment/order_split/confirm');
+        $package_id = 200001;
+        $this->caller->getPackageShippingDocument($package_id, 'SHIPPING_LABEL');
+        $this->assertPreviousRequest('GET', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages/'.$package_id.'/shipping_documents');
     }
 
-    public function testSearchPackage()
+    public function testGetPackageHandoverTimeSlots()
     {
-        $this->caller->searchPackage();
-        $this->assertPreviousRequest('POST','fulfillment/search');
+        $package_id = 200001;
+        $this->caller->getPackageHandoverTimeSlots($package_id);
+        $this->assertPreviousRequest('GET', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages/'.$package_id.'/handover_time_slots');
     }
 
     public function testUpdatePackageDeliveryStatus()
     {
         $this->caller->updatePackageDeliveryStatus();
-        $this->assertPreviousRequest('POST', 'fulfillment/delivery');
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages/deliver');
     }
 
-    public function testUpdatePackageShippingInfo()
+    public function testSearchCombinablePackages()
     {
-        $this->caller->updatePackageShippingInfo(1, 'tracking_number', 1);
-        $this->assertPreviousRequest('POST', 'fulfillment/shipping_info/update');
+        $this->caller->searchCombinablePackages();
+        $this->assertPreviousRequest('GET', 'fulfillment/'.TestResource::TEST_API_VERSION.'/combinable_packages/search');
     }
 
-    public function testFulfillmentUploadFile()
+    public function testSearchPackage()
     {
-        $this->caller->fulfillmentUploadFile('file content');
-        $this->assertPreviousRequest('POST', 'fulfillment/uploadfile');
+        $this->caller->searchPackage();
+        $this->assertPreviousRequest('GET', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages/search');
     }
 
-    public function testVerifyOrderSplit()
+    public function testCombinePackage()
     {
-        $this->caller->verifyOrderSplit(1);
-        $this->assertPreviousRequest('POST', 'fulfillment/order_split/verify');
+        $this->caller->combinePackage([]);
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages/combine');
     }
 
-    public function testSearchPreCombinePackage()
+    public function testFulfillmentUploadDeliveryFile()
     {
-        $this->caller->searchPreCombinePackage();
-        $this->assertPreviousRequest('GET', 'fulfillment/pre_combine_pkg/list');
+        $this->caller->fulfillmentUploadDeliveryFile('file content');
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/files/upload');
+    }
+
+    public function testUpdateShippingInfo()
+    {
+        $order_id = 10002;
+        $this->caller->updateShippingInfo($order_id, 'tracking number', 200001);
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/orders/'.$order_id.'/shipping_info/update');
+    }
+
+    public function testMarkPackageAsShipped()
+    {
+        $order_id = 10002;
+        $this->caller->markPackageAsShipped($order_id, 'tracking number', 200001);
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/orders/'.$order_id.'/packages');
+    }
+
+    public function testGetTracking()
+    {
+        $order_id = 10002;
+        $this->caller->getTracking($order_id);
+        $this->assertPreviousRequest('GET', 'fulfillment/'.TestResource::TEST_API_VERSION.'/orders/'.$order_id.'/tracking');
+    }
+
+    public function testGetOrderSplitAttributes()
+    {
+        $this->caller->getOrderSplitAttributes([]);
+        $this->assertPreviousRequest('GET', 'fulfillment/'.TestResource::TEST_API_VERSION.'/orders/split_attributes');
+    }
+
+    public function testUncombinePackages()
+    {
+        $package_id = 200001;
+        $this->caller->uncombinePackages($package_id);
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages/'.$package_id.'/uncombine');
     }
 
     public function testGetPackageDetail()
     {
-        $this->caller->getPackageDetail(1);
-        $this->assertPreviousRequest('GET', 'fulfillment/detail');
-    }
-
-    public function testGetPackageShippingInfo()
-    {
-        $this->caller->getPackageShippingInfo(1);
-        $this->assertPreviousRequest('GET', 'fulfillment/shipping_info');
-    }
-
-    public function testShipPackage()
-    {
-        $this->caller->shipPackage(1);
-        $this->assertPreviousRequest('POST', 'fulfillment/rts');
-    }
-
-    public function testConfirmPrecombinePackage()
-    {
-        $this->caller->confirmPrecombinePackage(1);
-        $this->assertPreviousRequest('POST', 'fulfillment/pre_combine_pkg/confirm');
-    }
-
-    public function testGetPackageShippingDocument()
-    {
-        $this->caller->getPackageShippingDocument(1, 1);
-        $this->assertPreviousRequest('GET', 'fulfillment/shipping_document');
-    }
-
-    public function testGetPackagePickupConfig()
-    {
-        $this->caller->getPackagePickupConfig(1);
-        $this->assertPreviousRequest('GET', 'fulfillment/package_pickup_config/list');
-    }
-
-    public function testRemovePackageOrder()
-    {
-        $this->caller->removePackageOrder(1);
-        $this->assertPreviousRequest('POST', 'fulfillment/package/remove');
-    }
-
-    public function testFulfillmentUploadImage()
-    {
-        $this->caller->fulfillmentUploadImage('image content');
-        $this->assertPreviousRequest('POST', 'fulfillment/uploadimage');
+        $package_id = 200001;
+        $this->caller->getPackageDetail($package_id);
+        $this->assertPreviousRequest('GET', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages/'.$package_id);
     }
 
     public function testBatchShipPackages()
     {
         $this->caller->batchShipPackages([]);
-        $this->assertPreviousRequest('POST', 'fulfillment/batch_rts');
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages/ship');
+    }
+
+    public function testSplitOrders()
+    {
+        $order_id = 10002;
+        $this->caller->splitOrders($order_id, []);
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/orders/'.$order_id.'/split');
+    }
+
+    public function testCreatePackages()
+    {
+        $this->caller->createPackages(1000);
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages');
+    }
+
+    public function testShipPackage()
+    {
+        $package_id = 300001;
+        $this->caller->shipPackage($package_id);
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages/'.$package_id.'/ship');
+    }
+
+    public function testUpdatePackageShippingInfo()
+    {
+        $package_id = 300001;
+        $this->caller->updatePackageShippingInfo($package_id, 'tracking number', 200001);
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/packages/'.$package_id.'/shipping_info/update');
+    }
+
+    public function testFulfillmentUploadDeliveryImage()
+    {
+        $this->caller->fulfillmentUploadDeliveryImage('image content');
+        $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/images/upload');
+    }
+
+    public function testGetEligibleShippingService()
+    {
+        $order_id = 100005;
+        $this->caller->getEligibleShippingService($order_id);
+        $this->assertPreviousRequest('GET', 'fulfillment/'.TestResource::TEST_API_VERSION.'/orders/'.$order_id.'/shipping_services/query');
     }
 }
