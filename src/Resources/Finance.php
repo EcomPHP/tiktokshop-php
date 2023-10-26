@@ -17,35 +17,52 @@ class Finance extends Resource
 {
     protected $category = 'finance';
 
-    public function getSettlements($params = [])
+    public function getOrderStatementTransactions($order_id)
+    {
+        return $this->call('GET', 'orders/'.$order_id.'/statement_transactions');
+    }
+
+    public function getStatementTransactions($statement_id, $params = [])
     {
         $params = array_merge([
-            'page_size' => 20,
+            'sort_field' => 'order_create_time', // required
         ], $params);
 
-        return $this->call('POST', 'settlements/search', [
-            RequestOptions::JSON => $params
+        return $this->call('GET', 'statements/'.$statement_id.'/statement_transactions', [
+            RequestOptions::QUERY => $params,
         ]);
     }
 
-    public function getTransactions($params = [])
+    public function getWithdrawals($params = [])
     {
         $params = array_merge([
-            'page_size' => 20,
-            'offset' => 0,
+            'types' => 'WITHDRAW,SETTLE,TRANSFER,REVERSE', // required, default get all
         ], $params);
 
-        return $this->call('POST', 'transactions/search', [
-            RequestOptions::JSON => $params
+        return $this->call('GET', 'withdrawals', [
+            RequestOptions::QUERY => $params,
         ]);
     }
 
-    public function getOrderSettlements($order_id)
+    public function getStatements($params = [])
     {
-        return $this->call('GET', 'order/settlements', [
-            RequestOptions::QUERY => [
-                'order_id' => $order_id
-            ]
+        $params = array_merge([
+            'sort_field' => 'statement_time', // required
+        ], $params);
+
+        return $this->call('GET', 'statements', [
+            RequestOptions::QUERY => $params,
+        ]);
+    }
+
+    public function getPayments($params = [])
+    {
+        $params = array_merge([
+            'sort_field' => 'create_time', // required
+        ], $params);
+
+        return $this->call('GET', 'payments', [
+            RequestOptions::QUERY => $params,
         ]);
     }
 }
