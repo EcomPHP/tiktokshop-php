@@ -43,7 +43,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class Client
 {
-    private CONST DEFAULT_VERSION = '202212';
+    public CONST DEFAULT_VERSION = '202309';
     protected $app_key;
     protected $app_secret;
     protected $shop_id;
@@ -146,16 +146,12 @@ class Client
         $query['app_key'] = $this->getAppKey();
         $query['timestamp'] = time();
 
-        if ($this->version && !isset($query['version'])) {
-            $query['version'] = $this->version;
-        }
-
         if ($this->shop_id && !isset($query['shop_id'])) {
             $query['shop_id'] = $this->shop_id;
         }
 
-        if ($this->access_token && !isset($query['access_token'])) {
-            $query['access_token'] = $this->access_token;
+        if ($this->access_token && !isset($query['x-tts-access-token'])) {
+            $query['x-tts-access-token'] = $this->access_token;
         }
 
         if ($this->shop_cipher && !isset($query['shop_cipher'])) {
@@ -186,7 +182,7 @@ class Client
         $options = array_merge([
             RequestOptions::HTTP_ERRORS => false, // disable throw exception on http 4xx, manual handle it
             'handler' => $stack,
-            'base_uri' => 'https://'.$api_domain_endpoint.'/api/',
+            'base_uri' => 'https://'.$api_domain_endpoint.'/',
         ], $this->options ?? []);
 
         return new GuzzleHttpClient($options);
@@ -246,6 +242,7 @@ class Client
             throw new TiktokShopException("Invalid resource class ".$resourceClassName);
         }
 
+        $resource->useVersion($this->version);
         $resource->useHttpClient($this->httpClient());
 
         return $resource;
