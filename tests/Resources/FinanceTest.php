@@ -2,7 +2,7 @@
 /*
  * This file is part of tiktokshop-client.
  *
- * (c) Jin <j@sax.vn>
+ * Copyright (c) 2023 Jin <j@sax.vn> All rights reserved.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,23 +12,41 @@ namespace NVuln\TiktokShop\Tests\Resources;
 
 use NVuln\TiktokShop\Tests\TestResource;
 
+/**
+ * @property-read \NVuln\TiktokShop\Resources\Finance $caller
+ */
 class FinanceTest extends TestResource
 {
-    public function testGetTransactions()
+
+    public function testGetPayments()
     {
-        $this->caller->getTransactions();
-        $this->assertPreviousRequest('POST', 'finance/transactions/search');
+        $this->caller->getPayments();
+        $this->assertPreviousRequest('GET', 'finance/'.TestResource::TEST_API_VERSION.'/payments');
     }
 
-    public function testGetOrderSettlements()
+    public function testGetOrderStatementTransactions()
     {
-        $this->caller->getOrderSettlements(1);
-        $this->assertPreviousRequest('GET', 'finance/order/settlements');
+        $order_id = 200001;
+        $this->caller->getOrderStatementTransactions($order_id);
+        $this->assertPreviousRequest('GET', 'finance/'.TestResource::TEST_API_VERSION.'/orders/'.$order_id.'/statement_transactions');
     }
 
-    public function testGetSettlements()
+    public function testGetStatementTransactions()
     {
-        $this->caller->getSettlements();
-        $this->assertPreviousRequest('POST', 'finance/settlements/search');
+        $statement_id = 200001;
+        $this->caller->getStatementTransactions($statement_id);
+        $this->assertPreviousRequest('GET', 'finance/'.TestResource::TEST_API_VERSION.'/statements/'.$statement_id.'/statement_transactions');
+    }
+
+    public function testGetStatements()
+    {
+        $this->caller->getStatements();
+        $this->assertPreviousRequest('GET', 'finance/'.TestResource::TEST_API_VERSION.'/statements');
+    }
+
+    public function testGetWithdrawals()
+    {
+        $this->caller->getWithdrawals();
+        $this->assertPreviousRequest('GET', 'finance/'.TestResource::TEST_API_VERSION.'/withdrawals');
     }
 }
