@@ -13,6 +13,7 @@ namespace NVuln\TiktokShop;
 use DateTimeInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use NVuln\TiktokShop\Client as TiktokShopClient;
 use NVuln\TiktokShop\Errors\ResponseException;
 use NVuln\TiktokShop\Errors\TokenException;
 use SplFileInfo;
@@ -30,6 +31,11 @@ abstract class Resource
 
     protected $last_request_id = null;
 
+    public function useVersion($version)
+    {
+        $this->version = $version;
+    }
+
     public function useHttpClient(Client $client)
     {
         $this->httpClient = $client;
@@ -40,7 +46,7 @@ abstract class Resource
      */
     public function call($method, $action, $params = [])
     {
-        $uri = trim($this->prefix.'/'.$action, '/');
+        $uri = trim($this->category.'/'.$this->version.'/'.$action, '/');
         try {
             $response = $this->httpClient->request($method, $uri, $params);
         } catch (GuzzleException $e) {
