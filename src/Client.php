@@ -24,31 +24,30 @@ use NVuln\TiktokShop\Resources\Order;
 use NVuln\TiktokShop\Resources\Product;
 use NVuln\TiktokShop\Resources\Promotion;
 use NVuln\TiktokShop\Resources\ReturnRefund;
-use NVuln\TiktokShop\Resources\Reverse;
 use NVuln\TiktokShop\Resources\Seller;
 use NVuln\TiktokShop\Resources\Authorization;
 use NVuln\TiktokShop\Resources\Supplychain;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * @property-read Authorization $Shop
+ * @property-read Authorization $Authorization
  * @property-read Seller $Seller
  * @property-read Product $Product
  * @property-read Order $Order
  * @property-read Fulfillment $Fulfillment
  * @property-read Logistic $Logistic
- * @property-read Reverse $Reverse
  * @property-read Finance $Finance
  * @property-read GlobalProduct $GlobalProduct
  * @property-read Promotion $Promotion
  * @property-read Supplychain $Supplychain
+ * @property-read Event $Event
+ * @property-read ReturnRefund $ReturnRefund
  */
 class Client
 {
     public CONST DEFAULT_VERSION = '202309';
     protected $app_key;
     protected $app_secret;
-    protected $shop_id;
     protected $access_token;
 
     /**
@@ -81,11 +80,10 @@ class Client
         ReturnRefund::class,
     ];
 
-    public function __construct($app_key, $app_secret, $shop_id = null, $sandbox = false, $version = self::DEFAULT_VERSION, $options = [])
+    public function __construct($app_key, $app_secret, $sandbox = false, $version = self::DEFAULT_VERSION, $options = [])
     {
         $this->app_key = $app_key;
         $this->app_secret = $app_secret;
-        $this->shop_id = $shop_id;
         $this->sandbox = $sandbox;
         $this->version = $version;
         $this->options = $options;
@@ -109,11 +107,6 @@ class Client
     public function setAccessToken($access_token)
     {
         $this->access_token = $access_token;
-    }
-
-    public function setShopId($shop_id)
-    {
-        $this->shop_id = $shop_id;
     }
 
     public function setShopCipher($shop_cipher)
@@ -149,12 +142,8 @@ class Client
         $query['app_key'] = $this->getAppKey();
         $query['timestamp'] = time();
 
-        if ($this->shop_id && !isset($query['shop_id'])) {
-            $query['shop_id'] = $this->shop_id;
-        }
-
         if ($this->access_token && !isset($query['x-tts-access-token'])) {
-            $query['x-tts-access-token'] = $this->access_token;
+            $request = $request->withHeader('x-tts-access-token', $this->access_token);
         }
 
         if ($this->shop_cipher && !isset($query['shop_cipher'])) {
@@ -162,13 +151,18 @@ class Client
         }
 
         // do not pass shop_cipher to global product api
-        if (preg_match('/^\/product\/(\d{6})\/global_products/', $uri->getPath())) {
+        if (preg_match('/^\/product\/(\d{6})\/global_products/', $uri->getPath()) || preg_match('/^\/(authorization|seller)\/(\d{6})\//', $uri->getPath())) {
             unset($query['shop_cipher']);
         }
 
-        $this->prepareSignature($uri->getPath(), $query);
+        $this->prepareSignature($request, $query);
 
         $uri = $uri->withQuery(http_build_query($query));
+
+        // set default content-type to application/json
+        if (!$request->getHeaderLine('content-type')) {
+            $request = $request->withHeader('content-type', 'application/json');
+        }
 
         return $request->withUri($uri);
     }
@@ -195,17 +189,17 @@ class Client
      * tiktokshop api signature algorithm
      * @see https://partner.tiktokshop.com/doc/page/274638
      *
-     * @param $uri
+     * @param RequestInterface $request
      * @param $params
      * @return void
      */
-    protected function prepareSignature($uri, &$params)
+    protected function prepareSignature($request, &$params)
     {
         $paramsToBeSigned = $params;
         $stringToBeSigned = '';
 
         // 1. Extract all query param EXCEPT ' sign ', ' access_token ', reorder the params based on alphabetical order.
-        unset($paramsToBeSigned['sign'], $paramsToBeSigned['access_token']);
+        unset($paramsToBeSigned['sign'], $paramsToBeSigned['access_token'], $paramsToBeSigned['x-tts-access-token']);
         ksort($paramsToBeSigned);
 
         // 2. Concat all the param in the format of {key}{value}
@@ -216,9 +210,14 @@ class Client
         }
 
         // 3. Append the request path to the beginning
-        $stringToBeSigned = $uri . $stringToBeSigned;
+        $stringToBeSigned = $request->getUri()->getPath() . $stringToBeSigned;
 
-        // 4. Wrap string generated in step 3 with app_secret.
+        // 4. If the request header content_type is not multipart/form-data, append body to the end
+        if ($request->getMethod() !== 'GET' && $request->getHeaderLine('content-type') !== 'multipart/form-data') {
+            $stringToBeSigned .= (string) $request->getBody();
+        }
+
+        // 5. Wrap string generated in step 3 with app_secret.
         $stringToBeSigned = $this->getAppSecret() . $stringToBeSigned . $this->getAppSecret();
 
         // Encode the digest byte stream in hexadecimal and use sha256 to generate sign with salt(secret).
