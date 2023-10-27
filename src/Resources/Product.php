@@ -177,13 +177,13 @@ class Product extends GlobalProduct
         ]);
     }
 
-    public function searchProducts($params = [])
+    public function searchProducts($params = [], $page_size = 20, $page_token = '')
     {
-        $params = array_merge([
-            'page_size' => 20, // required
-        ], $params);
-
         return $this->call('POST', 'products/search', [
+            RequestOptions::QUERY => [
+                'page_size' => $page_size,
+                'page_token' => $page_token,
+            ],
             RequestOptions::JSON => $params
         ]);
     }
