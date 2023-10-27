@@ -30,7 +30,7 @@ class ClientTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = new Client('app_key', 'app_secret', 'shop_id');
+        $this->client = new Client('app_key', 'app_secret');
     }
 
     public function testSetAccessToken()
@@ -49,32 +49,23 @@ class ClientTest extends TestCase
         $this->assertInstanceOf(Auth::class, $this->client->auth());
     }
 
-    public function testSetShopId()
-    {
-        $clientReflection = new ReflectionClass($this->client);
-
-        $shopIdProperty = $clientReflection->getProperty('shop_id');
-        $shopIdProperty->setAccessible(true);
-
-        $this->client->setShopId('new_shop_id');
-
-        $this->assertEquals('new_shop_id', $shopIdProperty->getValue($this->client));
-    }
-
     public function testUseSandboxMode()
     {
         $clientReflection = new ReflectionClass($this->client);
-
         $sandboxProperty = $clientReflection->getProperty('sandbox');
         $sandboxProperty->setAccessible(true);
 
         // sandbox is off
-        $this->assertEquals(false, $sandboxProperty->getValue($this->client));
+        $this->assertFalse($sandboxProperty->getValue($this->client));
 
+        // change sandbox mode
         $this->client->useSandboxMode();
+        $clientReflection = new ReflectionClass($this->client);
+        $sandboxProperty = $clientReflection->getProperty('sandbox');
+        $sandboxProperty->setAccessible(true);
 
         // sandbox is on
-        $this->assertEquals(true, $sandboxProperty->getValue($this->client));
+        $this->assertTrue($sandboxProperty->getValue($this->client));
     }
 
     public function test__get()
@@ -110,14 +101,14 @@ class ClientTest extends TestCase
     {
         // create proxy class with public prepareSignature function
         $publicClient = new class('app_key', 'app_secret') extends Client {
-            public function prepareSignature($uri, &$params)
+            public function prepareSignature($request, &$params)
             {
-                parent::prepareSignature($uri, $params);
+                parent::prepareSignature($request, $params);
             }
         };
 
         $params = ['foo' => 'bar'];
-        $publicClient->prepareSignature('/test-api', $params);
+        $publicClient->prepareSignature(new Request('GET', '/test-api'), $params);
 
         $this->assertArrayHasKey('sign', $params);
         $this->assertEquals('d3cb7fe11ecae942802ceeca67e7cf10120cc12f1517d45fbc1c8cfe5413c80f', $params['sign']);
@@ -127,7 +118,6 @@ class ClientTest extends TestCase
     {
         $request = new Request('GET', 'https://open-api.tiktokglobalshop.com/product/202309/products');
 
-        $this->client->setShopId('shop_id');
         $this->client->setAccessToken('access_token');
         $this->client->setShopCipher('shop_cipher');
 
@@ -142,9 +132,10 @@ class ClientTest extends TestCase
         $this->assertArrayHasKey('app_key', $query);
         $this->assertArrayHasKey('timestamp', $query);
         $this->assertArrayHasKey('sign', $query);
-        $this->assertArrayHasKey('shop_id', $query);
-        $this->assertArrayHasKey('x-tts-access-token', $query);
         $this->assertArrayHasKey('shop_cipher', $query);
+
+        $this->assertArrayHasKey('x-tts-access-token', $modifiedRequest->getHeaders());
+        $this->assertEquals('access_token', $modifiedRequest->getHeaderLine('x-tts-access-token'));
 
         // test for global product api
         $globalProductRequest = new Request('GET', 'https://open-api.tiktokglobalshop.com/product/202309/global_products/1231/inventory/update');
