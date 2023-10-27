@@ -8,6 +8,8 @@
 
 Tiktok Shop API Client is a simple SDK implementation of Tiktok Shop API.
 
+Since v2.x, library used API version 202309 and later. For older API version, please use v1.x
+
 ## Installation
 
 Install with Composer
@@ -95,7 +97,6 @@ $new_refresh_token = $new_token['refresh_token'];
 ```php
 $client = new Client($app_key, $app_secret);
 $client->setAccessToken($access_token);
-$client->setShopId($shop_id);
 ```
 
 * Get product list: [api document](https://developers.tiktok-shops.com/documents/document/237487)
