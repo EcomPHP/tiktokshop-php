@@ -18,14 +18,14 @@ class Fulfillment extends Resource
 {
     protected $category = 'fulfillment';
 
-    public function searchCombinablePackages($params = [])
+    public function searchCombinablePackages($query = [])
     {
-        $params = array_merge([
+        $query = array_merge([
             'page_size' => 20,
-        ], $params);
+        ], $query);
 
         return $this->call('GET', 'combinable_packages/search', [
-            RequestOptions::QUERY => $params
+            RequestOptions::QUERY => $query
         ]);
     }
 
@@ -59,13 +59,14 @@ class Fulfillment extends Resource
         ]);
     }
 
-    public function searchPackage($params = [])
+    public function searchPackage($query = [], $params = [])
     {
-        $params = array_merge([
+        $query = array_merge([
             'page_size' => 20,
-        ], $params);
+        ], $query);
 
         return $this->call('POST', 'packages/search', [
+            RequestOptions::QUERY => $query,
             RequestOptions::JSON => $params,
         ]);
     }

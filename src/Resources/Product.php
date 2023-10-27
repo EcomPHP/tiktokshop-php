@@ -122,14 +122,14 @@ class Product extends GlobalProduct
         ]);
     }
 
-    public function getBrands($params = [])
+    public function getBrands($query = [])
     {
-        $params = array_merge([
+        $query = array_merge([
             'page_size' => 20,
-        ], $params);
+        ], $query);
 
         return $this->call('GET', 'brands', [
-            RequestOptions::QUERY => $params
+            RequestOptions::QUERY => $query
         ]);
     }
 
