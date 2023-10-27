@@ -76,13 +76,13 @@ class GlobalProduct extends Resource
         ]);
     }
 
-    public function searchGlobalProducts($params = [])
+    public function searchGlobalProducts($params = [], $page_size = 20, $page_token = '')
     {
-        $params = array_merge([
-            'page_size' => 20,
-        ], $params);
-
         return $this->call('POST', 'global_products/search', [
+            RequestOptions::QUERY => [
+                'page_size' => $page_size,
+                'page_token' => $page_token,
+            ],
             RequestOptions::JSON => $params
         ]);
     }

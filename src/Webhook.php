@@ -18,7 +18,10 @@ class Webhook
     public const REVERSE_ORDER_STATUS_UPDATE = 2;
     public const RECIPIENT_ADDRESS_UPDATE = 3;
     public const PACKAGE_UPDATE = 4;
-    public const PRODUCT_AUDIT_RESULT_UPDATE = 5;
+    public const PRODUCT_STATUS_UPDATE = 5;
+    public const RETURN_STATUS_UPDATE = 12;
+    public const SELLER_DEAUTHORIZATION = 6;
+    public const UPCOMING_AUTHORIZATION_EXPIRATION = 7;
 
     /**
      * @var Client
