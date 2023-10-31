@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NVuln\TiktokShop\Errors;
+namespace EcomPHP\TiktokShop\Errors;
 
 class TokenException extends ResponseException
 {

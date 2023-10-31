@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace NVuln\TiktokShop\Tests;
+namespace EcomPHP\TiktokShop\Tests;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use NVuln\TiktokShop\Errors\ResponseException;
-use NVuln\TiktokShop\Resource;
+use EcomPHP\TiktokShop\Errors\ResponseException;
+use EcomPHP\TiktokShop\Resource;
 use PHPUnit\Framework\TestCase;
 
 class ResourceTest extends TestCase

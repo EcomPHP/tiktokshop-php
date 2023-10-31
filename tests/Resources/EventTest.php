@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace NVuln\TiktokShop\Tests\Resources;
+namespace EcomPHP\TiktokShop\Tests\Resources;
 
-use NVuln\TiktokShop\Resources\Event;
-use NVuln\TiktokShop\Tests\TestResource;
+use EcomPHP\TiktokShop\Resources\Event;
+use EcomPHP\TiktokShop\Tests\TestResource;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @property-read \NVuln\TiktokShop\Resources\Event $caller
+ * @property-read \EcomPHP\TiktokShop\Resources\Event $caller
  */
 class EventTest extends TestResource
 {

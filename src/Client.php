@@ -8,25 +8,25 @@
  * file that was distributed with this source code.
  */
 
-namespace NVuln\TiktokShop;
+namespace EcomPHP\TiktokShop;
 
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Client as GuzzleHttpClient;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\RequestOptions;
-use NVuln\TiktokShop\Errors\TiktokShopException;
-use NVuln\TiktokShop\Resources\Event;
-use NVuln\TiktokShop\Resources\Finance;
-use NVuln\TiktokShop\Resources\Fulfillment;
-use NVuln\TiktokShop\Resources\GlobalProduct;
-use NVuln\TiktokShop\Resources\Logistic;
-use NVuln\TiktokShop\Resources\Order;
-use NVuln\TiktokShop\Resources\Product;
-use NVuln\TiktokShop\Resources\Promotion;
-use NVuln\TiktokShop\Resources\ReturnRefund;
-use NVuln\TiktokShop\Resources\Seller;
-use NVuln\TiktokShop\Resources\Authorization;
-use NVuln\TiktokShop\Resources\Supplychain;
+use EcomPHP\TiktokShop\Errors\TiktokShopException;
+use EcomPHP\TiktokShop\Resources\Event;
+use EcomPHP\TiktokShop\Resources\Finance;
+use EcomPHP\TiktokShop\Resources\Fulfillment;
+use EcomPHP\TiktokShop\Resources\GlobalProduct;
+use EcomPHP\TiktokShop\Resources\Logistic;
+use EcomPHP\TiktokShop\Resources\Order;
+use EcomPHP\TiktokShop\Resources\Product;
+use EcomPHP\TiktokShop\Resources\Promotion;
+use EcomPHP\TiktokShop\Resources\ReturnRefund;
+use EcomPHP\TiktokShop\Resources\Seller;
+use EcomPHP\TiktokShop\Resources\Authorization;
+use EcomPHP\TiktokShop\Resources\Supplychain;
 use Psr\Http\Message\RequestInterface;
 
 /**

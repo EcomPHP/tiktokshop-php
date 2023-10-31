@@ -8,13 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace NVuln\TiktokShop\Tests;
+namespace EcomPHP\TiktokShop\Tests;
 
 use GuzzleHttp\Psr7\Request;
-use NVuln\TiktokShop\Auth;
-use NVuln\TiktokShop\Client;
-use NVuln\TiktokShop\Errors\TiktokShopException;
-use NVuln\TiktokShop\Resource;
+use EcomPHP\TiktokShop\Auth;
+use EcomPHP\TiktokShop\Client;
+use EcomPHP\TiktokShop\Errors\TiktokShopException;
+use EcomPHP\TiktokShop\Resource;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use ReflectionClass;

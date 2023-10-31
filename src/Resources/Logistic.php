@@ -8,9 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace NVuln\TiktokShop\Resources;
+namespace EcomPHP\TiktokShop\Resources;
 
-use NVuln\TiktokShop\Resource;
+use EcomPHP\TiktokShop\Resource;
 
 class Logistic extends Resource
 {

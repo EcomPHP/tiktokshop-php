@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace NVuln\TiktokShop;
+namespace EcomPHP\TiktokShop;
 
 use DateTimeInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use NVuln\TiktokShop\Client as TiktokShopClient;
-use NVuln\TiktokShop\Errors\ResponseException;
-use NVuln\TiktokShop\Errors\TokenException;
+use EcomPHP\TiktokShop\Client as TiktokShopClient;
+use EcomPHP\TiktokShop\Errors\ResponseException;
+use EcomPHP\TiktokShop\Errors\TokenException;
 use SplFileInfo;
 
 abstract class Resource
@@ -42,7 +42,7 @@ abstract class Resource
     }
 
     /**
-     * @throws \NVuln\TiktokShop\Errors\TiktokShopException
+     * @throws \EcomPHP\TiktokShop\Errors\TiktokShopException
      */
     public function call($method, $action, $params = [])
     {

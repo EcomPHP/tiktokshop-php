@@ -15,13 +15,13 @@ Since v2.x, library used API version 202309 and later. For older API version, pl
 Install with Composer
 
 ```shell
-composer require nvuln/tiktokshop-php
+composer require ecomphp/tiktokshop-php
 ```
 
 ## Configure TiktokShop PHP Client
 
 ```php
-use NVuln\TiktokShop\Client;
+use EcomPHP\TiktokShop\Client;
 
 $app_key = 'your app key';
 $app_secret = 'your app secret';
@@ -127,8 +127,8 @@ $webhook = $client->webhook();
 or manually configure the webhook receiver
 
 ```php
-use NVuln\TiktokShop\Webhook;
-use NVuln\TiktokShop\Errors\TiktokShopException;
+use EcomPHP\TiktokShop\Webhook;
+use EcomPHP\TiktokShop\Errors\TiktokShopException;
 
 $webhook = new Webhook($client);
 try {

@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace NVuln\TiktokShop\Tests;
+namespace EcomPHP\TiktokShop\Tests;
 
-use NVuln\TiktokShop\Client;
-use NVuln\TiktokShop\Errors\TiktokShopException;
-use NVuln\TiktokShop\Webhook;
+use EcomPHP\TiktokShop\Client;
+use EcomPHP\TiktokShop\Errors\TiktokShopException;
+use EcomPHP\TiktokShop\Webhook;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
