@@ -36,15 +36,15 @@ class Order extends Resource
         ]);
     }
 
-    public function getOrderList($query = [], $params = [])
+    public function getOrderList($query = [], $body = null)
     {
-        $query = array_merge([
-            'page_size' => 20, // required
-        ], $query);
+        if ($body === null) {
+            static::extractParams($query, $query, $body);
+        }
 
         return $this->call('POST', 'orders/search', [
             RequestOptions::QUERY => $query,
-            RequestOptions::JSON => $params,
+            is_array($body) ? RequestOptions::JSON : RequestOptions::FORM_PARAMS => $body,
         ]);
     }
 }

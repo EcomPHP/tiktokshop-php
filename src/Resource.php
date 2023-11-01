@@ -99,6 +99,19 @@ abstract class Resource
         }
     }
 
+    static public function extractParams($array, &$query, &$body)
+    {
+        $body = $array;
+        unset($body['page_size'], $body['sort_order'], $body['page_token'], $body['sort_field']);
+
+        $query = array_filter([
+            'page_size' => $array['page_size'] ?? 20,
+            'sort_order' => $array['sort_order'] ?? null,
+            'page_token' => $array['page_token'] ?? null,
+            'sort_field' => $array['sort_field'] ?? null,
+        ]);
+    }
+
     static public function dataTypeCast($type, $data)
     {
         switch ($type) {
