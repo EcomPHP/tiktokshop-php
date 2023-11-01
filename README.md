@@ -69,7 +69,7 @@ $access_token = $token['access_token'];
 $refresh_token = $token['refresh_token'];
 ```
 
-3) Get authorized Shop ID
+3) Get authorized Shop cipher
 
 ```php
 $access_token = $token['access_token'];
@@ -77,7 +77,7 @@ $client->setAccessToken($access_token);
 
 $authorizedShopList = $client->Shop->getAuthorizedShop();
 
-// extract shop_id from $authorizedShopList
+// extract shop_id & cipher from $authorizedShopList for use later
 ```
 
 ## Refresh your access token
@@ -92,11 +92,12 @@ $new_refresh_token = $new_token['refresh_token'];
 ```
 ## Usage API Example
 
-> You need `access_token` and `shop_id` to start using TiktokShop API
+> You need `access_token` and `shop_cipher` to start using TiktokShop API
 
 ```php
 $client = new Client($app_key, $app_secret);
 $client->setAccessToken($access_token);
+$client->setShopCipher($shop_cipher);
 ```
 
 * Get product list: [api document](https://developers.tiktok-shops.com/documents/document/237487)
