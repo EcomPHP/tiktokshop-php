@@ -75,7 +75,7 @@ $refresh_token = $token['refresh_token'];
 $access_token = $token['access_token'];
 $client->setAccessToken($access_token);
 
-$authorizedShopList = $client->Shop->getAuthorizedShop();
+$authorizedShopList = $client->Authorization->getAuthorizedShop();
 
 // extract shop_id & cipher from $authorizedShopList for use later
 ```
