@@ -52,7 +52,7 @@ class ProductTest extends TestResource
 
     public function testUploadProductImage()
     {
-        $this->caller->uploadProductImage('image data');
+        $this->caller->uploadProductImage('php://memory');
         $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/images/upload');
     }
 
@@ -64,7 +64,7 @@ class ProductTest extends TestResource
 
     public function testUploadProductFile()
     {
-        $this->caller->uploadProductFile('file data');
+        $this->caller->uploadProductFile('php://memory');
         $this->assertPreviousRequest('POST', 'product/'.TestResource::TEST_API_VERSION.'/files/upload');
     }
 

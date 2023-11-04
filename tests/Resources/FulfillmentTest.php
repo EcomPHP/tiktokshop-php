@@ -58,7 +58,7 @@ class FulfillmentTest extends TestResource
 
     public function testFulfillmentUploadDeliveryFile()
     {
-        $this->caller->fulfillmentUploadDeliveryFile('file content');
+        $this->caller->fulfillmentUploadDeliveryFile('php://memory');
         $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/files/upload');
     }
 
@@ -138,7 +138,7 @@ class FulfillmentTest extends TestResource
 
     public function testFulfillmentUploadDeliveryImage()
     {
-        $this->caller->fulfillmentUploadDeliveryImage('image content');
+        $this->caller->fulfillmentUploadDeliveryImage('php://memory');
         $this->assertPreviousRequest('POST', 'fulfillment/'.TestResource::TEST_API_VERSION.'/images/upload');
     }
 
