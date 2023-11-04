@@ -150,8 +150,9 @@ class Client
             $query['shop_cipher'] = $this->shop_cipher;
         }
 
-        // do not pass shop_cipher to global product api
-        if (preg_match('/^\/product\/(\d{6})\/global_products/', $uri->getPath()) || preg_match('/^\/(authorization|seller)\/(\d{6})\//', $uri->getPath())) {
+        // shop_cipher is not allowed in some api
+        if (preg_match('/^\/product\/(\d{6})\/(global_products|files\/upload|images\/upload)/', $uri->getPath())
+            || preg_match('/^\/(authorization|seller)\/(\d{6})\//', $uri->getPath())) {
             unset($query['shop_cipher']);
         }
 
@@ -213,7 +214,7 @@ class Client
         $stringToBeSigned = $request->getUri()->getPath() . $stringToBeSigned;
 
         // 4. If the request header content_type is not multipart/form-data, append body to the end
-        if ($request->getMethod() !== 'GET' && $request->getHeaderLine('content-type') !== 'multipart/form-data') {
+        if ($request->getMethod() !== 'GET' && strpos($request->getHeaderLine('content-type'), 'multipart/form-data') === false) {
             $stringToBeSigned .= (string) $request->getBody();
         }
 

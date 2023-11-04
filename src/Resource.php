@@ -16,7 +16,6 @@ use GuzzleHttp\Exception\GuzzleException;
 use EcomPHP\TiktokShop\Client as TiktokShopClient;
 use EcomPHP\TiktokShop\Errors\ResponseException;
 use EcomPHP\TiktokShop\Errors\TokenException;
-use SplFileInfo;
 
 abstract class Resource
 {
@@ -117,12 +116,11 @@ abstract class Resource
         switch ($type) {
             case 'image':
             case 'file':
-                $file_data = $data;
-                if ($data instanceof SplFileInfo || (filter_var($data, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED) && getimagesize($data))) {
-                    $file_data = file_get_contents($data);
+                if (is_resource($data)) {
+                    return $data;
                 }
 
-                return base64_encode($file_data);
+                return fopen($data, 'r');
             case 'int':
             case 'integer':
                 return intval($data);

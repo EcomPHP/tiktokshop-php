@@ -27,9 +27,16 @@ class Product extends GlobalProduct
         }
 
         return $this->call('POST', 'files/upload', [
-            RequestOptions::JSON => [
-                'name' => $file_name,
-                'data' => static::dataTypeCast('file', $file),
+            RequestOptions::MULTIPART => [
+                [
+                    'name' => 'data',
+                    'filename' => $file_name,
+                    'contents' => static::dataTypeCast('file', $file),
+                ],
+                [
+                    'name' => 'name',
+                    'contents' => $file_name,
+                ]
             ]
         ]);
     }
@@ -37,9 +44,16 @@ class Product extends GlobalProduct
     public function uploadProductImage($image, $use_case = 'MAIN_IMAGE')
     {
         return $this->call('POST', 'images/upload', [
-            RequestOptions::JSON => [
-                'data' => static::dataTypeCast('image', $image),
-                'use_case' => $use_case,
+            RequestOptions::MULTIPART => [
+                [
+                    'name' => 'data',
+                    'filename' => 'image',
+                    'contents' => static::dataTypeCast('image', $image),
+                ],
+                [
+                    'name' => 'use_case',
+                    'contents' => $use_case,
+                ]
             ]
         ]);
     }
