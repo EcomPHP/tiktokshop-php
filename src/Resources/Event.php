@@ -11,6 +11,7 @@
 namespace EcomPHP\TiktokShop\Resources;
 
 use EcomPHP\TiktokShop\Resource;
+use GuzzleHttp\RequestOptions;
 
 class Event extends Resource
 {
@@ -24,15 +25,19 @@ class Event extends Resource
     public function updateShopWebhook($event_type, $webhook_url)
     {
         return $this->call('PUT', 'webhooks', [
-            'address' => $webhook_url,
-            'event_type' => $event_type,
+            RequestOptions::JSON => [
+                'address' => $webhook_url,
+                'event_type' => $event_type,
+            ]
         ]);
     }
 
     public function deleteShopWebhook($event_type)
     {
         return $this->call('DELETE', 'webhooks', [
-            'event_type' => $event_type,
+            RequestOptions::JSON => [
+                'event_type' => $event_type,
+            ]
         ]);
     }
 }
