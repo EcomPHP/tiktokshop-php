@@ -75,7 +75,7 @@ $refresh_token = $token['refresh_token'];
 $access_token = $token['access_token'];
 $client->setAccessToken($access_token);
 
-$authorizedShop = $client->AuthorizedShop->getShop();
+$authorizedShopList = $client->Authorization->getAuthorizedShop();
 
 // extract shop_id & cipher from $authorizedShopList for use later
 ```
@@ -97,7 +97,7 @@ $new_refresh_token = $new_token['refresh_token'];
 ```php
 $client = new Client($app_key, $app_secret);
 $client->setAccessToken($access_token);
-$client->setShopCipher($authorizedShop['shop_cipher']);
+$client->setShopCipher($shop_cipher);
 ```
 
 * Get product list: [api document](https://developers.tiktok-shops.com/documents/document/237487)

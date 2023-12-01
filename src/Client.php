@@ -25,12 +25,12 @@ use EcomPHP\TiktokShop\Resources\Product;
 use EcomPHP\TiktokShop\Resources\Promotion;
 use EcomPHP\TiktokShop\Resources\ReturnRefund;
 use EcomPHP\TiktokShop\Resources\Seller;
-use EcomPHP\TiktokShop\Resources\AuthorizedShop;
+use EcomPHP\TiktokShop\Resources\Authorization;
 use EcomPHP\TiktokShop\Resources\Supplychain;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * @property-read AuthorizedShop $AuthorizedShop
+ * @property-read Authorization $AuthorizedShop
  * @property-read Seller $Seller
  * @property-read Product $Product
  * @property-read Order $Order
@@ -66,7 +66,7 @@ class Client
     protected $options;
 
     public const resources = [
-        AuthorizedShop::class,
+        Authorization::class,
         Seller::class,
         Product::class,
         Order::class,
