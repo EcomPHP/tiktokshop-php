@@ -18,7 +18,7 @@ use SplFileInfo;
  */
 class Product extends GlobalProduct
 {
-    protected $category = 'product';
+    protected $category = 'products/';
 
     public function uploadProductFile($file, $file_name = 'uploaded_file.pdf')
     {

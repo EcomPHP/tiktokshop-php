@@ -25,12 +25,12 @@ use EcomPHP\TiktokShop\Resources\Product;
 use EcomPHP\TiktokShop\Resources\Promotion;
 use EcomPHP\TiktokShop\Resources\ReturnRefund;
 use EcomPHP\TiktokShop\Resources\Seller;
-use EcomPHP\TiktokShop\Resources\Authorization;
+use EcomPHP\TiktokShop\Resources\AuthorizedShop;
 use EcomPHP\TiktokShop\Resources\Supplychain;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * @property-read Authorization $Authorization
+ * @property-read AuthorizedShop $AuthorizedShop
  * @property-read Seller $Seller
  * @property-read Product $Product
  * @property-read Order $Order
@@ -66,7 +66,7 @@ class Client
     protected $options;
 
     public const resources = [
-        Authorization::class,
+        AuthorizedShop::class,
         Seller::class,
         Product::class,
         Order::class,
@@ -134,13 +134,14 @@ class Client
      * @param RequestInterface $request
      * @return RequestInterface
      */
-    protected function modifyRequestBeforeSend(RequestInterface $request)
+    public function modifyRequestBeforeSend(RequestInterface $request)
     {
         $uri = $request->getUri();
         parse_str($uri->getQuery(), $query);
 
         $query['app_key'] = $this->getAppKey();
         $query['timestamp'] = time();
+        $query['access_token'] = $this->access_token;
 
         if ($this->access_token && !isset($query['x-tts-access-token'])) {
             $request = $request->withHeader('x-tts-access-token', $this->access_token);
@@ -180,7 +181,7 @@ class Client
         $options = array_merge([
             RequestOptions::HTTP_ERRORS => false, // disable throw exception on http 4xx, manual handle it
             'handler' => $stack,
-            'base_uri' => 'https://'.$api_domain_endpoint.'/',
+            'base_uri' => 'https://'.$api_domain_endpoint.'/api/',
         ], $this->options ?? []);
 
         return new GuzzleHttpClient($options);

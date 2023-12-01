@@ -45,7 +45,8 @@ abstract class Resource
      */
     public function call($method, $action, $params = [])
     {
-        $uri = trim($this->category.'/'.$this->version.'/'.$action, '/');
+        $uri = trim("/$action", '/');
+
         try {
             $response = $this->httpClient->request($method, $uri, $params);
         } catch (GuzzleException $e) {

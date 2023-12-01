@@ -12,12 +12,12 @@ namespace EcomPHP\TiktokShop\Resources;
 
 use EcomPHP\TiktokShop\Resource;
 
-class Authorization extends Resource
+class AuthorizedShop extends Resource
 {
-    protected $category = 'authorization';
+    protected $category = 'shop';
 
-    public function getAuthorizedShop()
+    public function getShop()
     {
-        return $this->call('GET', 'shops');
+        return $this->call('GET', 'shop/get_authorized_shop')['shop_list'][0];
     }
 }
