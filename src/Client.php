@@ -30,7 +30,7 @@ use EcomPHP\TiktokShop\Resources\Supplychain;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * @property-read Authorization $AuthorizedShop
+ * @property-read Authorization $Authorization
  * @property-read Seller $Seller
  * @property-read Product $Product
  * @property-read Order $Order
