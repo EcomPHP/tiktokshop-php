@@ -131,7 +131,7 @@ class Product extends GlobalProduct
 
     public function getCategories($params = [])
     {
-        return $this->call('GET', 'categories', [
+        return $this->call('GET', 'products/categories', [
             RequestOptions::QUERY => $params
         ]);
     }
