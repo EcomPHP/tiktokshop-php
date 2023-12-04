@@ -43,7 +43,9 @@ class Product extends GlobalProduct
 
     public function uploadProductImage(array $data)
     {
-        return $this->call('POST', 'products/upload_imgs', $data);
+        return $this->call('POST', 'products/upload_imgs', [
+            RequestOptions::JSON => $data
+        ]);
     }
 
     public function createProduct($data)
