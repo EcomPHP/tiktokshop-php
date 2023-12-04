@@ -41,21 +41,9 @@ class Product extends GlobalProduct
         ]);
     }
 
-    public function uploadProductImage($image, $use_case = 'MAIN_IMAGE')
+    public function uploadProductImage(array $data)
     {
-        return $this->call('POST', 'images/upload', [
-            RequestOptions::MULTIPART => [
-                [
-                    'name' => 'data',
-                    'filename' => 'image',
-                    'contents' => static::dataTypeCast('image', $image),
-                ],
-                [
-                    'name' => 'use_case',
-                    'contents' => $use_case,
-                ]
-            ]
-        ]);
+        return $this->call('POST', 'products/upload_imgs', $data);
     }
 
     public function createProduct($data)
