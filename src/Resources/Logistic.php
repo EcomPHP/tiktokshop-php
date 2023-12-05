@@ -18,21 +18,21 @@ class Logistic extends Resource
 
     public function getWarehouseDeliveryOptions($warehouse_id)
     {
-        return $this->call('GET', 'warehouses/'.$warehouse_id.'/delivery_options');
+        return $this->call('GET', 'logistics/warehouses/'.$warehouse_id.'/delivery_options');
     }
 
     public function getShippingProvider($delivery_option_id)
     {
-        return $this->call('GET','delivery_options/'.$delivery_option_id.'/shipping_providers');
+        return $this->call('GET','logistics/delivery_options/'.$delivery_option_id.'/shipping_providers');
     }
 
     public function getWarehouseList()
     {
-        return $this->call('GET', 'warehouses');
+        return $this->call('GET', 'logistics/get_warehouse_list');
     }
 
     public function getGlobalSellerWarehouse()
     {
-        return $this->call('GET', 'global_warehouses');
+        return $this->call('GET', 'logistics/global_warehouses');
     }
 }
