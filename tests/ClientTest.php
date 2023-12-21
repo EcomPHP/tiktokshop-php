@@ -49,25 +49,6 @@ class ClientTest extends TestCase
         $this->assertInstanceOf(Auth::class, $this->client->auth());
     }
 
-    public function testUseSandboxMode()
-    {
-        $clientReflection = new ReflectionClass($this->client);
-        $sandboxProperty = $clientReflection->getProperty('sandbox');
-        $sandboxProperty->setAccessible(true);
-
-        // sandbox is off
-        $this->assertFalse($sandboxProperty->getValue($this->client));
-
-        // change sandbox mode
-        $this->client->useSandboxMode();
-        $clientReflection = new ReflectionClass($this->client);
-        $sandboxProperty = $clientReflection->getProperty('sandbox');
-        $sandboxProperty->setAccessible(true);
-
-        // sandbox is on
-        $this->assertTrue($sandboxProperty->getValue($this->client));
-    }
-
     public function test__get()
     {
         $resources = Client::resources;
@@ -86,15 +67,8 @@ class ClientTest extends TestCase
 
     public function test__construct()
     {
-        $clientReflection = new ReflectionClass($this->client);
-
         $this->assertEquals('app_key', $this->client->getAppKey());
         $this->assertEquals('app_secret', $this->client->getAppSecret());
-
-        $sandboxProperty = $clientReflection->getProperty('sandbox');
-        $sandboxProperty->setAccessible(true);
-
-        $this->assertEquals(false, $sandboxProperty->getValue($this->client));
     }
 
     public function testPrepareSignature()

@@ -22,12 +22,12 @@ class Auth
 
     protected $authHost;
 
-    public function __construct(Client $client, $sandbox = false)
+    public function __construct(Client $client)
     {
         $this->client = $client;
         $this->httpClient = new GuzzleHttpClient();
 
-        $this->authHost = $sandbox ? 'https://auth-sandbox.tiktok-shops.com' : 'https://auth.tiktok-shops.com';
+        $this->authHost = 'https://auth.tiktok-shops.com';
     }
 
     public function createAuthRequest($state = null, $returnAuthUrl = false)

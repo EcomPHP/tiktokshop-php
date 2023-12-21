@@ -54,7 +54,6 @@ class Client
      * required for calling cross-border shop
      */
     protected $shop_cipher;
-    protected $sandbox;
     protected $version;
 
     /**
@@ -80,18 +79,17 @@ class Client
         ReturnRefund::class,
     ];
 
-    public function __construct($app_key, $app_secret, $sandbox = false, $version = self::DEFAULT_VERSION, $options = [])
+    public function __construct($app_key, $app_secret, $options = [])
     {
         $this->app_key = $app_key;
         $this->app_secret = $app_secret;
-        $this->sandbox = $sandbox;
-        $this->version = $version;
+        $this->version = static::DEFAULT_VERSION;
         $this->options = $options;
     }
 
     public function useSandboxMode()
     {
-        $this->sandbox = true;
+        trigger_deprecation('ecomphp/tiktokshop-php', '2.0.0', 'useSandboxMode() will be deprecated: Since API version 202309, Tiktokshop API sandbox is no longer worked, please use production environment.');
     }
 
     public function getAppKey()
@@ -116,7 +114,7 @@ class Client
 
     public function auth()
     {
-        return new Auth($this, $this->sandbox);
+        return new Auth($this);
     }
 
     public function webhook()
@@ -175,12 +173,10 @@ class Client
             return $this->modifyRequestBeforeSend($request);
         }));
 
-        $api_domain_endpoint = $this->sandbox ? 'open-api-sandbox.tiktokglobalshop.com' : 'open-api.tiktokglobalshop.com';
-
         $options = array_merge([
             RequestOptions::HTTP_ERRORS => false, // disable throw exception on http 4xx, manual handle it
             'handler' => $stack,
-            'base_uri' => 'https://'.$api_domain_endpoint.'/',
+            'base_uri' => 'https://open-api.tiktokglobalshop.com/',
         ], $this->options ?? []);
 
         return new GuzzleHttpClient($options);
