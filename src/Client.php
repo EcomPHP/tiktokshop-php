@@ -10,6 +10,7 @@
 
 namespace EcomPHP\TiktokShop;
 
+use EcomPHP\TiktokShop\Resources\CustomerService;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Client as GuzzleHttpClient;
 use GuzzleHttp\Middleware;
@@ -77,6 +78,7 @@ class Client
         Supplychain::class,
         Event::class,
         ReturnRefund::class,
+        CustomerService::class,
     ];
 
     public function __construct($app_key, $app_secret, $options = [])
