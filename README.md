@@ -29,12 +29,6 @@ $app_secret = 'your app secret';
 $client = new Client($app_key, $app_secret);
 ```
 
-### Enable sandbox mode if you want to test the client
-
-```php
-$client->useSandboxMode();
-```
-
 ## Grant token
 
 There is a Auth class to help you getting the token from the shop using oAuth.
