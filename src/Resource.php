@@ -11,6 +11,7 @@
 namespace EcomPHP\TiktokShop;
 
 use DateTimeInterface;
+use EcomPHP\TiktokShop\Errors\TiktokShopException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use EcomPHP\TiktokShop\Client as TiktokShopClient;
@@ -32,12 +33,20 @@ abstract class Resource
 
     public function useVersion($version)
     {
+        if (intval($version) < 202309) {
+            throw new TiktokShopException('API version 202309 is the minimum requirement');
+        }
+
         $this->version = $version;
+
+        return $this;
     }
 
     public function useHttpClient(Client $client)
     {
         $this->httpClient = $client;
+
+        return $this;
     }
 
     /**

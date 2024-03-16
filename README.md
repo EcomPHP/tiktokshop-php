@@ -111,6 +111,15 @@ $orders = $client->Order->getOrderList([
 ]);
 ```
 
+## Change API version
+
+> As default, API version 202309 will be used in every api call
+> Use below example to change it
+
+```php
+$products = $client->Product->useVersion('202312')->checkListingPrerequisites(); 
+```
+
 ## Webhook
 
 Use webhook to receive incoming notification from tiktok shop
