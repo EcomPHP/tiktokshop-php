@@ -113,8 +113,7 @@ $orders = $client->Order->getOrderList([
 
 ## Change API version
 
-> As default, API version 202309 will be used in every api call
-> Use below example to change it
+> As default, API version 202309 will be used in every api call. Use example below to change it
 
 ```php
 $products = $client->Product->useVersion('202312')->checkListingPrerequisites(); 
