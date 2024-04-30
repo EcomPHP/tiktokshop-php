@@ -43,9 +43,10 @@ class ReturnRefund extends Resource
         ]);
     }
 
-    public function searchReturns($params = [])
+    public function searchReturns($query = [], $params = [])
     {
         return $this->call('POST', 'returns/search', [
+            RequestOptions::QUERY => $query,
             RequestOptions::JSON => $params,
         ]);
     }
