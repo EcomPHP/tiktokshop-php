@@ -17,10 +17,15 @@ class ReturnRefund extends Resource
 {
     protected $category = 'return_refund';
 
-    public function searchCancellations($params = [])
+    public function searchCancellations($query = [], $body = null)
     {
+        if ($body === null) {
+            static::extractParams($query, $query, $body);
+        }
         return $this->call('POST', 'cancellations/search', [
-            RequestOptions::JSON => $params,
+            RequestOptions::QUERY => $query,
+            RequestOptions::JSON => $body,
+
         ]);
     }
 
@@ -43,11 +48,14 @@ class ReturnRefund extends Resource
         ]);
     }
 
-    public function searchReturns($query = [], $params = [])
+    public function searchReturns($query = [], $body = null)
     {
+        if ($body === null) {
+            static::extractParams($query, $query, $body);
+        }
         return $this->call('POST', 'returns/search', [
             RequestOptions::QUERY => $query,
-            RequestOptions::JSON => $params,
+            RequestOptions::JSON => $body,
         ]);
     }
 
