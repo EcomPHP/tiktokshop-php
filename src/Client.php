@@ -10,6 +10,7 @@
 
 namespace EcomPHP\TiktokShop;
 
+use EcomPHP\TiktokShop\Resources\AffiliateSeller;
 use EcomPHP\TiktokShop\Resources\CustomerService;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Client as GuzzleHttpClient;
@@ -44,6 +45,7 @@ use Psr\Http\Message\RequestInterface;
  * @property-read Event $Event
  * @property-read ReturnRefund $ReturnRefund
  * @property-read CustomerService $CustomerService
+ * @property-read AffiliateSeller $AffiliateSeller
  */
 class Client
 {
@@ -80,6 +82,7 @@ class Client
         Event::class,
         ReturnRefund::class,
         CustomerService::class,
+        AffiliateSeller::class,
     ];
 
     public function __construct($app_key, $app_secret, $options = [])

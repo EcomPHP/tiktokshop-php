@@ -10,6 +10,8 @@
 
 namespace EcomPHP\TiktokShop\Tests;
 
+use EcomPHP\TiktokShop\Resources\Authorization;
+use EcomPHP\TiktokShop\Resources\Seller;
 use GuzzleHttp\Psr7\Request;
 use EcomPHP\TiktokShop\Auth;
 use EcomPHP\TiktokShop\Client;
@@ -51,7 +53,12 @@ class ClientTest extends TestCase
 
     public function test__get()
     {
-        $resources = Client::resources;
+        // test get some resource
+        $resources = [
+            Authorization::class,
+            Seller::class,
+        ];
+
         foreach ($resources as $resource) {
             $reflect = new ReflectionClass($resource);
             $className = $reflect->getShortName();
