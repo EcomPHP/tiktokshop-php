@@ -43,6 +43,7 @@ use Psr\Http\Message\RequestInterface;
  * @property-read Supplychain $Supplychain
  * @property-read Event $Event
  * @property-read ReturnRefund $ReturnRefund
+ * @property-read CustomerService $CustomerService
  */
 class Client
 {
