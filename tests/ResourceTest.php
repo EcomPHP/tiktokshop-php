@@ -19,7 +19,6 @@ use GuzzleHttp\Psr7\Response;
 use EcomPHP\TiktokShop\Errors\ResponseException;
 use EcomPHP\TiktokShop\Resource;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 class ResourceTest extends TestCase
 {
@@ -82,7 +81,7 @@ class ResourceTest extends TestCase
 
         // test older version
         $this->expectException(TiktokShopException::class);
-        $this->expectExceptionMessage('API version 202309 is the minimum requirement');
+        $this->expectExceptionMessage('API version '.\EcomPHP\TiktokShop\Client::DEFAULT_VERSION.' is the minimum requirement to access this resource');
         $this->resource->useVersion('202109')->call('GET', 'test-api');
     }
 }

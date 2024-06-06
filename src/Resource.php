@@ -31,10 +31,18 @@ abstract class Resource
 
     protected $last_request_id = null;
 
+    protected $minimum_version = 202309;
+
     public function useVersion($version)
     {
-        if (intval($version) < 202309) {
-            throw new TiktokShopException('API version 202309 is the minimum requirement');
+        // version 202309 is minimum for this library
+        $minimum_version = intval($this->minimum_version);
+        if ($minimum_version < 202309) {
+            $minimum_version = 202309;
+        }
+
+        if (intval($version) < $minimum_version) {
+            throw new TiktokShopException('API version '.$this->minimum_version.' is the minimum requirement to access this resource');
         }
 
         $this->version = $version;

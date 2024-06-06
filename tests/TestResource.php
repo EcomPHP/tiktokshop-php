@@ -33,7 +33,7 @@ abstract class TestResource extends TestCase
 
         $resourceName = preg_replace('/.+\\\Resources\\\\(\w+)Test$/', '$1', get_called_class());
 
-        $client = new TiktokApiClient('app_key', 'app_secret');
+        $client = $this->tiktokShopClientForTest();
 
         $response = new Response(200, [], '{"code":0,"message":"success","data":[],"request_id":"sample request id"}');
 
@@ -48,8 +48,13 @@ abstract class TestResource extends TestCase
         ]);
 
         $this->caller = $client->{$resourceName};
-        $this->caller->useVersion(self::TEST_API_VERSION);
+        $this->caller->useVersion(static::TEST_API_VERSION);
         $this->caller->useHttpClient($httpClient);
+    }
+
+    protected function tiktokShopClientForTest()
+    {
+        return new TiktokApiClient('app_key', 'app_secret');
     }
 
     protected function assertPreviousRequest($method, $uri)
