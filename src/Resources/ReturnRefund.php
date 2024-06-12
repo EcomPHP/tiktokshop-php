@@ -25,7 +25,6 @@ class ReturnRefund extends Resource
         return $this->call('POST', 'cancellations/search', [
             RequestOptions::QUERY => $query,
             RequestOptions::JSON => $body,
-
         ]);
     }
 
@@ -84,9 +83,11 @@ class ReturnRefund extends Resource
         return $this->call('GET', 'orders/'.$order_id.'/aftersale_eligibility');
     }
 
-    public function getRejectReasons()
+    public function getRejectReasons($query = [])
     {
-        return $this->call('GET', 'reject_reasons');
+        return $this->call('GET', 'reject_reasons', [
+            RequestOptions::QUERY => $query
+        ]);
     }
 
     public function calculateRefund($params)
