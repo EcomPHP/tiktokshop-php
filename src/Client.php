@@ -10,6 +10,7 @@
 
 namespace EcomPHP\TiktokShop;
 
+use EcomPHP\TiktokShop\Resources\AffiliateCreator;
 use EcomPHP\TiktokShop\Resources\AffiliateSeller;
 use EcomPHP\TiktokShop\Resources\CustomerService;
 use GuzzleHttp\HandlerStack;
@@ -46,6 +47,7 @@ use Psr\Http\Message\RequestInterface;
  * @property-read ReturnRefund $ReturnRefund
  * @property-read CustomerService $CustomerService
  * @property-read AffiliateSeller $AffiliateSeller
+ * @property-read AffiliateCreator $AffiliateCreator
  */
 class Client
 {
@@ -83,6 +85,7 @@ class Client
         ReturnRefund::class,
         CustomerService::class,
         AffiliateSeller::class,
+        AffiliateCreator::class,
     ];
 
     public function __construct($app_key, $app_secret, $options = [])
