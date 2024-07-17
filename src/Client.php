@@ -10,9 +10,11 @@
 
 namespace EcomPHP\TiktokShop;
 
+use EcomPHP\TiktokShop\Errors\ResponseException;
 use EcomPHP\TiktokShop\Resources\AffiliateCreator;
 use EcomPHP\TiktokShop\Resources\AffiliateSeller;
 use EcomPHP\TiktokShop\Resources\CustomerService;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Client as GuzzleHttpClient;
 use GuzzleHttp\Middleware;
@@ -265,4 +267,32 @@ class Client
         return $resource;
     }
 
+    public function call($method, $uri, $params = [])
+    {
+        try {
+            $response = $this->httpClient()->request($method, $uri, $params);
+        } catch (GuzzleException $e) {
+            throw new ResponseException($e->getMessage(), $e->getCode(), $e);
+        }
+
+        $json = json_decode((string) $response->getBody(), true);
+
+        if ($json === null) {
+            throw new ResponseException('Unable to parse response string as JSON');
+        }
+
+        return $json;
+    }
+
+    public function get($uri)
+    {
+        return $this->call('GET', $uri);
+    }
+
+    public function post($uri, $data)
+    {
+        return $this->call('POST', $uri, [
+            RequestOptions::JSON => $data,
+        ]);
+    }
 }
