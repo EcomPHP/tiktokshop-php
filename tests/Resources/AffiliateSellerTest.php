@@ -10,6 +10,7 @@
 
 namespace EcomPHP\TiktokShop\Tests\Resources;
 
+use EcomPHP\TiktokShop\Errors\TiktokShopException;
 use EcomPHP\TiktokShop\Tests\TestResource;
 
 /**
@@ -17,7 +18,7 @@ use EcomPHP\TiktokShop\Tests\TestResource;
  */
 class AffiliateSellerTest extends TestResource
 {
-    public const TEST_API_VERSION = 202406;
+    public const TEST_API_VERSION = 202405;
 
     protected function tiktokShopClientForTest()
     {
@@ -65,13 +66,21 @@ class AffiliateSellerTest extends TestResource
 
     public function testGetMarketplaceCreatorPerformance()
     {
-        $this->caller->getMarketplaceCreatorPerformance(1);
-        $this->assertPreviousRequest('GET', 'affiliate_seller/'.self::TEST_API_VERSION.'/marketplace_creators/1');
+        $this->caller->useVersion(202406)->getMarketplaceCreatorPerformance(1);
+        $this->assertPreviousRequest('GET', 'affiliate_seller/202406/marketplace_creators/1');
+
+        $this->expectException(TiktokShopException::class);
+        $this->expectExceptionMessage('API version 202406 is the minimum requirement to access this resource');
+        $this->caller->useVersion(self::TEST_API_VERSION)->getMarketplaceCreatorPerformance(1);
     }
 
     public function testSearchCreatorOnMarketplace()
     {
-        $this->caller->searchCreatorOnMarketplace();
-        $this->assertPreviousRequest('POST', 'affiliate_seller/'.self::TEST_API_VERSION.'/marketplace_creators/search');
+        $this->caller->useVersion(202406)->searchCreatorOnMarketplace();
+        $this->assertPreviousRequest('POST', 'affiliate_seller/202406/marketplace_creators/search');
+
+        $this->expectException(TiktokShopException::class);
+        $this->expectExceptionMessage('API version 202406 is the minimum requirement to access this resource');
+        $this->caller->useVersion(self::TEST_API_VERSION)->searchCreatorOnMarketplace();
     }
 }

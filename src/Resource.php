@@ -50,6 +50,13 @@ abstract class Resource
         return $this;
     }
 
+    public function checkMinimumVersion($version)
+    {
+        if ($this->version < intval($version)) {
+            throw new TiktokShopException('API version '.$version.' is the minimum requirement to access this resource');
+        }
+    }
+
     public function useHttpClient(Client $client)
     {
         $this->httpClient = $client;

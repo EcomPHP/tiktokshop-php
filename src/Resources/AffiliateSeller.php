@@ -16,7 +16,7 @@ use GuzzleHttp\RequestOptions;
 class AffiliateSeller extends Resource
 {
     protected $category = 'affiliate_seller';
-    protected $minimum_version = 202406;
+    protected $minimum_version = 202405;
 
     public function editOpenCollaborationSettings($body)
     {
@@ -79,11 +79,15 @@ class AffiliateSeller extends Resource
 
     public function getMarketplaceCreatorPerformance($creator_user_id)
     {
+        $this->checkMinimumVersion(202406);
+
         return $this->call('GET', 'marketplace_creators/'.$creator_user_id);
     }
 
     public function searchCreatorOnMarketplace($query = [], $body = [])
     {
+        $this->checkMinimumVersion(202406);
+
         $query = array_merge([
             'page_size' => 12,
         ], $query);
