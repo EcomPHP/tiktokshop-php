@@ -32,4 +32,49 @@ class AffiliatePartner extends Resource
             RequestOptions::QUERY => $query,
         ]);
     }
+
+    public function getAffiliatePartnerCampaignDetail($campaign_id, $query)
+    {
+        return $this->call('GET', 'campaigns/'.$campaign_id, [
+            RequestOptions::QUERY => $query,
+        ]);
+    }
+
+    public function reviewAffiliatePartnerCampaignProduct($campaign_id, $product_id, $query, $body)
+    {
+        return $this->call('POST', 'campaigns/'.$campaign_id.'/products/'.$product_id.'/review', [
+            RequestOptions::QUERY => $query,
+            RequestOptions::JSON => $body,
+        ]);
+    }
+
+    public function editAffiliatePartnerCampaign($campaign_id, $query, $body)
+    {
+        return $this->call('POST', 'campaigns/'.$campaign_id.'/partial_edit', [
+            RequestOptions::QUERY => $query,
+            RequestOptions::JSON => $body,
+        ]);
+    }
+
+    public function getAffiliatePartnerCampaignList($query)
+    {
+        return $this->call('GET', 'campaigns', [
+            RequestOptions::QUERY => $query,
+        ]);
+    }
+
+    public function publishAffiliatePartnerCampaign($campaign_id, $query)
+    {
+        return $this->call('POST', 'campaigns/'.$campaign_id.'/publish', [
+            RequestOptions::QUERY => $query,
+        ]);
+    }
+
+    public function generateAffiliatePartnerCampaignProductLink($campaign_id, $product_id, $query, $body)
+    {
+        return $this->call('POST', 'campaigns/'.$campaign_id.'/products/'.$product_id.'/promotion_link/generate', [
+            RequestOptions::QUERY => $query,
+            RequestOptions::JSON => $body,
+        ]);
+    }
 }
