@@ -12,6 +12,7 @@ namespace EcomPHP\TiktokShop;
 
 use EcomPHP\TiktokShop\Errors\ResponseException;
 use EcomPHP\TiktokShop\Resources\AffiliateCreator;
+use EcomPHP\TiktokShop\Resources\AffiliatePartner;
 use EcomPHP\TiktokShop\Resources\AffiliateSeller;
 use EcomPHP\TiktokShop\Resources\CustomerService;
 use GuzzleHttp\Exception\GuzzleException;
@@ -50,6 +51,7 @@ use Psr\Http\Message\RequestInterface;
  * @property-read CustomerService $CustomerService
  * @property-read AffiliateSeller $AffiliateSeller
  * @property-read AffiliateCreator $AffiliateCreator
+ * @property-read AffiliatePartner $AffiliatePartner
  */
 class Client
 {
@@ -88,6 +90,7 @@ class Client
         CustomerService::class,
         AffiliateSeller::class,
         AffiliateCreator::class,
+        AffiliatePartner::class,
     ];
 
     public function __construct($app_key, $app_secret, $options = [])
