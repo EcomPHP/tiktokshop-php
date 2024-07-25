@@ -54,7 +54,10 @@ abstract class TestResource extends TestCase
 
     protected function tiktokShopClientForTest()
     {
-        return new TiktokApiClient('app_key', 'app_secret');
+        $client = new TiktokApiClient('app_key', 'app_secret');
+        $client->useVersion(static::TEST_API_VERSION);
+
+        return $client;
     }
 
     protected function assertPreviousRequest($method, $uri)

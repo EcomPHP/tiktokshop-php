@@ -20,14 +20,6 @@ class AffiliateSellerTest extends TestResource
 {
     public const TEST_API_VERSION = 202405;
 
-    protected function tiktokShopClientForTest()
-    {
-        $client = parent::tiktokShopClientForTest();
-        $client->useVersion(self::TEST_API_VERSION);
-
-        return $client;
-    }
-
     public function testEditOpenCollaborationSettings()
     {
         $this->caller->editOpenCollaborationSettings([]);
