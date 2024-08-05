@@ -20,4 +20,9 @@ class Authorization extends Resource
     {
         return $this->call('GET', 'shops');
     }
+
+    public function getAuthorizedCategoryAssets()
+    {
+        return $this->call('GET', 'category_assets');
+    }
 }
