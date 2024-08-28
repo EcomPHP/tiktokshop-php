@@ -50,13 +50,6 @@ abstract class Resource
         return $this;
     }
 
-    public function checkMinimumVersion($version)
-    {
-        if ($this->version < intval($version)) {
-            throw new TiktokShopException('API version '.$version.' is the minimum requirement to access this resource');
-        }
-    }
-
     public function useHttpClient(Client $client)
     {
         $this->httpClient = $client;
@@ -67,9 +60,14 @@ abstract class Resource
     /**
      * @throws \EcomPHP\TiktokShop\Errors\TiktokShopException
      */
-    public function call($method, $action, $params = [])
+    public function call($method, $action, $params = [], $version = null)
     {
-        $uri = trim($this->category.'/'.$this->version.'/'.$action, '/');
+        // if version not set or it's lower than default version
+        if ($version === null || $this->version > intval($version)) {
+            $version = $this->version;
+        }
+
+        $uri = trim($this->category.'/'.$version.'/'.$action, '/');
         try {
             $response = $this->httpClient->request($method, $uri, $params);
         } catch (GuzzleException $e) {

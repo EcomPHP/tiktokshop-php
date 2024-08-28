@@ -58,21 +58,13 @@ class AffiliateSellerTest extends TestResource
 
     public function testGetMarketplaceCreatorPerformance()
     {
-        $this->caller->useVersion(202406)->getMarketplaceCreatorPerformance(1);
+        $this->caller->getMarketplaceCreatorPerformance(1);
         $this->assertPreviousRequest('GET', 'affiliate_seller/202406/marketplace_creators/1');
-
-        $this->expectException(TiktokShopException::class);
-        $this->expectExceptionMessage('API version 202406 is the minimum requirement to access this resource');
-        $this->caller->useVersion(self::TEST_API_VERSION)->getMarketplaceCreatorPerformance(1);
     }
 
     public function testSearchCreatorOnMarketplace()
     {
-        $this->caller->useVersion(202406)->searchCreatorOnMarketplace();
+        $this->caller->searchCreatorOnMarketplace();
         $this->assertPreviousRequest('POST', 'affiliate_seller/202406/marketplace_creators/search');
-
-        $this->expectException(TiktokShopException::class);
-        $this->expectExceptionMessage('API version 202406 is the minimum requirement to access this resource');
-        $this->caller->useVersion(self::TEST_API_VERSION)->searchCreatorOnMarketplace();
     }
 }

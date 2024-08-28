@@ -79,15 +79,11 @@ class AffiliateSeller extends Resource
 
     public function getMarketplaceCreatorPerformance($creator_user_id)
     {
-        $this->checkMinimumVersion(202406);
-
-        return $this->call('GET', 'marketplace_creators/'.$creator_user_id);
+        return $this->call('GET', 'marketplace_creators/'.$creator_user_id, [], 202406);
     }
 
     public function searchCreatorOnMarketplace($query = [], $body = [])
     {
-        $this->checkMinimumVersion(202406);
-
         $query = array_merge([
             'page_size' => 12,
         ], $query);
@@ -95,6 +91,6 @@ class AffiliateSeller extends Resource
         return $this->call('POST', 'marketplace_creators/search', [
             RequestOptions::QUERY => $query,
             RequestOptions::JSON => $body,
-        ]);
+        ], 202406);
     }
 }
