@@ -12,6 +12,9 @@ namespace EcomPHP\TiktokShop\Tests\Resources;
 
 use EcomPHP\TiktokShop\Tests\TestResource;
 
+/**
+ * @property-read \EcomPHP\TiktokShop\Resources\Authorization $caller
+ */
 class AuthorizationTest extends TestResource
 {
 
@@ -19,5 +22,11 @@ class AuthorizationTest extends TestResource
     {
         $this->caller->getAuthorizedShop();
         $this->assertPreviousRequest('GET', 'authorization/'.TestResource::TEST_API_VERSION.'/shops');
+    }
+
+    public function testGetAuthorizedCategoryAssets()
+    {
+        $this->caller->getAuthorizedCategoryAssets();
+        $this->assertPreviousRequest('GET', 'authorization/'.TestResource::TEST_API_VERSION.'/category_assets');
     }
 }

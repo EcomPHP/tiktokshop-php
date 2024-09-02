@@ -64,4 +64,17 @@ class PromotionTest extends TestResource
         $this->caller->removeActivityProduct($activity_id);
         $this->assertPreviousRequest('DELETE', 'promotion/'.TestResource::TEST_API_VERSION.'/activities/'.$activity_id.'/products');
     }
+
+    public function testSearchCoupons()
+    {
+        $this->caller->searchCoupons();
+        $this->assertPreviousRequest('POST', 'promotion/'.TestResource::TEST_API_VERSION.'/coupons/search');
+    }
+
+    public function testGetCoupon()
+    {
+        $coupon_id = 1009;
+        $this->caller->getCoupon($coupon_id);
+        $this->assertPreviousRequest('GET', 'promotion/'.TestResource::TEST_API_VERSION.'/coupons/'.$coupon_id);
+    }
 }

@@ -47,4 +47,37 @@ class Order extends Resource
             is_array($body) ? RequestOptions::JSON : RequestOptions::FORM_PARAMS => $body,
         ]);
     }
+
+    public function addExternalOrderReferences($orders)
+    {
+        return $this->call('POST', 'orders/external_orders', [
+            RequestOptions::JSON => [
+                'orders' => $orders,
+            ]
+        ], 202406);
+    }
+
+    public function searchOrderByExternalOrderReferences($platform, $external_order_id)
+    {
+        return $this->call('POST', 'orders/external_order_search', [
+            RequestOptions::QUERY => [
+                'platform' => $platform,
+                'external_order_id' => $external_order_id,
+            ]
+        ], 202406);
+    }
+
+    public function getExternalOrderReferences($order_id, $platform)
+    {
+        return $this->call('GET', 'orders/' . $order_id . '/external_orders', [
+            RequestOptions::QUERY => [
+                'platform' => $platform,
+            ]
+        ], 202406);
+    }
+
+    public function getPriceDetail($order_id)
+    {
+        return $this->call('GET', 'orders/' . $order_id . '/price_detail', [], 202407);
+    }
 }

@@ -77,4 +77,17 @@ class Promotion extends Resource
     {
         return $this->call('POST', 'activities/'.$activity_id.'/deactivate');
     }
+
+    public function searchCoupons($query = [], $body = [])
+    {
+        return $this->call('POST', 'coupons/search', [
+            RequestOptions::QUERY => $query,
+            RequestOptions::JSON => $body,
+        ]);
+    }
+
+    public function getCoupon($coupon_id)
+    {
+        return $this->call('GET', 'coupons/'.$coupon_id);
+    }
 }

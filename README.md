@@ -1,4 +1,4 @@
-# Unofficial Tiktok Shop API Client in PHP
+# TiktokShop API Client in PHP
 
 [![Total Downloads](https://poser.pugx.org/ecomphp/tiktokshop-php/downloads)](https://packagist.org/packages/ecomphp/tiktokshop-php) 
 [![Latest Stable Version](https://poser.pugx.org/ecomphp/tiktokshop-php/v/stable)](https://packagist.org/packages/ecomphp/tiktokshop-php) 
