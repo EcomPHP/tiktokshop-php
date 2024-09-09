@@ -173,6 +173,7 @@ class Client
 
         // shop_cipher is not allowed in some api
         if (preg_match('/^\/product\/(\d{6})\/(global_products|files\/upload|images\/upload)/', $uri->getPath())
+            || ($request->getMethod() === 'POST' && preg_match('/^\/product\/(\d{6})\/(brands)/', $uri->getPath()))
             || preg_match('/^\/(authorization|seller)\/(\d{6})\//', $uri->getPath())) {
             unset($query['shop_cipher']);
         }
