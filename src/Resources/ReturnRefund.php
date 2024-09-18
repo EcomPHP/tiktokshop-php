@@ -78,9 +78,11 @@ class ReturnRefund extends Resource
         ]);
     }
 
-    public function getAftersaleEligibility($order_id)
+    public function getAftersaleEligibility($order_id, $query = [])
     {
-        return $this->call('GET', 'orders/'.$order_id.'/aftersale_eligibility');
+        return $this->call('GET', 'orders/'.$order_id.'/aftersale_eligibility', [
+            RequestOptions::QUERY => $query
+        ]);
     }
 
     public function getRejectReasons($query = [])
