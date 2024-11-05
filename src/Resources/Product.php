@@ -168,13 +168,14 @@ class Product extends GlobalProduct
         return $this->call('GET', 'categories/'.$category_id.'/rules');
     }
 
-    public function recommendCategory($product_title, $description = '', $images = [])
+    public function recommendCategory($product_title, $description = '', $images = [], $category_version = 'v1')
     {
         return $this->call('POST', 'categories/recommend', [
             RequestOptions::JSON => [
                 'product_title' => $product_title,
                 'description' => $description,
                 'images' => $images,
+                'category_version' => $category_version,
             ]
         ]);
     }
