@@ -67,4 +67,82 @@ class AffiliateSellerTest extends TestResource
         $this->caller->searchCreatorOnMarketplace();
         $this->assertPreviousRequest('POST', 'affiliate_seller/202406/marketplace_creators/search');
     }
+
+    public function testGenerateAffiliateProductPromotionLink()
+    {
+        $this->caller->generateAffiliateProductPromotionLink(1);
+        $this->assertPreviousRequest('POST', 'affiliate_seller/'.self::TEST_API_VERSION.'/products/1/promotion_link/generate');
+    }
+
+    public function testSearchSampleApplicationsFulfillments()
+    {
+        $this->caller->searchSampleApplicationsFulfillments(1);
+        $this->assertPreviousRequest('POST', 'affiliate_seller/202409/sample_applications/1/fulfillments/search');
+    }
+
+    public function testReviewSampleApplications()
+    {
+        $this->caller->reviewSampleApplications(1, '', '');
+        $this->assertPreviousRequest('POST', 'affiliate_seller/202409/sample_applications/1/review');
+    }
+
+    public function testGetOpenCollaborationSampleRules()
+    {
+        $this->caller->getOpenCollaborationSampleRules([]);
+        $this->assertPreviousRequest('GET', 'affiliate_seller/202410/open_collaborations/sample_rules');
+    }
+
+    public function testSearchSampleApplications()
+    {
+        $this->caller->searchSampleApplications();
+        $this->assertPreviousRequest('POST', 'affiliate_seller/202409/sample_applications/search');
+    }
+
+    public function testEditOpenCollaborationSampleRule()
+    {
+        $this->caller->editOpenCollaborationSampleRule([]);
+        $this->assertPreviousRequest('POST', 'affiliate_seller/202410/open_collaborations/sample_rules');
+    }
+
+    public function testRemoveTargetCollaboration()
+    {
+        $this->caller->removeTargetCollaboration(1);
+        $this->assertPreviousRequest('DELETE', 'affiliate_seller/202409/target_collaborations/1');
+    }
+
+    public function testQueryTargetCollaborationDetail()
+    {
+        $this->caller->queryTargetCollaborationDetail(1);
+        $this->assertPreviousRequest('GET', 'affiliate_seller/202409/target_collaborations/1');
+    }
+
+    public function testSearchTargetCollaborations()
+    {
+        $this->caller->searchTargetCollaborations();
+        $this->assertPreviousRequest('POST', 'affiliate_seller/202409/target_collaborations/search');
+    }
+
+    public function testUpdateTargetCollaboration()
+    {
+        $this->caller->updateTargetCollaboration(1, []);
+        $this->assertPreviousRequest('PUT', 'affiliate_seller/202409/target_collaborations/1');
+    }
+
+    public function testSearchOpenCollaboration()
+    {
+        $this->caller->searchOpenCollaboration();
+        $this->assertPreviousRequest('POST', 'affiliate_seller/202409/open_collaborations/search');
+    }
+
+    public function testGetOpenCollaborationSettings()
+    {
+        $this->caller->getOpenCollaborationSettings();
+        $this->assertPreviousRequest('GET', 'affiliate_seller/202409/open_collaboration_settings');
+    }
+
+    public function testRemoveOpenCollaboration()
+    {
+        $this->caller->removeOpenCollaboration(1);
+        $this->assertPreviousRequest('DELETE', 'affiliate_seller/202409/open_collaborations/products/1');
+    }
 }

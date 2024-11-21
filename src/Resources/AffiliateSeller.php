@@ -93,4 +93,107 @@ class AffiliateSeller extends Resource
             RequestOptions::JSON => $body,
         ], 202406);
     }
+
+    public function generateAffiliateProductPromotionLink($product_id)
+    {
+        return $this->call('POST', 'products/'.$product_id.'/promotion_link/generate');
+    }
+
+    public function searchSampleApplicationsFulfillments($application_id, $body = [])
+    {
+        return $this->call('POST', 'sample_applications/'.$application_id.'/fulfillments/search', [
+            RequestOptions::JSON => $body,
+        ], 202409);
+    }
+
+    public function reviewSampleApplications($application_id, $review_result, $reject_reason = '')
+    {
+        return $this->call('POST', 'sample_applications/'.$application_id.'/review', [
+            RequestOptions::JSON => [
+                'review_result' => $review_result,
+                'reject_reason' => $reject_reason,
+            ],
+        ], 202409);
+    }
+
+    public function getOpenCollaborationSampleRules($product_ids)
+    {
+        return $this->call('GET', 'open_collaborations/sample_rules', [
+            RequestOptions::QUERY => [
+                'product_ids' => static::dataTypeCast('array', $product_ids),
+            ],
+        ], 202410);
+    }
+
+    public function searchSampleApplications($query = [], $body = [])
+    {
+        $query = array_merge([
+            'page_size' => 20,
+        ], $query);
+
+        return $this->call('POST', 'sample_applications/search', [
+            RequestOptions::QUERY => $query,
+            RequestOptions::JSON => $body,
+        ], 202409);
+    }
+
+    public function editOpenCollaborationSampleRule($body = [])
+    {
+        return $this->call('POST', 'open_collaborations/sample_rules', [
+            RequestOptions::JSON => $body,
+        ], 202410);
+    }
+
+    public function removeTargetCollaboration($target_collaboration_id)
+    {
+        return $this->call('DELETE', 'target_collaborations/'.$target_collaboration_id,
+            [], 202409);
+    }
+
+    public function queryTargetCollaborationDetail($target_collaboration_id)
+    {
+        return $this->call('GET', 'target_collaborations/'.$target_collaboration_id,
+            [], 202409);
+    }
+
+    public function searchTargetCollaborations($query = [], $body = [])
+    {
+        $query = array_merge([
+            'page_size' => 20,
+        ], $query);
+
+        return $this->call('POST', 'target_collaborations/search', [
+            RequestOptions::QUERY => $query,
+            RequestOptions::JSON => $body,
+        ], 202409);
+    }
+
+    public function updateTargetCollaboration($target_collaboration_id, $body)
+    {
+        return $this->call('PUT', 'target_collaborations/'.$target_collaboration_id, [
+            RequestOptions::JSON => $body,
+        ], 202409);
+    }
+
+    public function searchOpenCollaboration($query = [], $body = [])
+    {
+        $query = array_merge([
+            'page_size' => 20,
+        ], $query);
+
+        return $this->call('POST', 'open_collaborations/search', [
+            RequestOptions::QUERY => $query,
+            RequestOptions::JSON => $body,
+        ], 202409);
+    }
+
+    public function getOpenCollaborationSettings()
+    {
+        return $this->call('GET', 'open_collaboration_settings', [], 202409);
+    }
+
+    public function removeOpenCollaboration($product_id)
+    {
+        return $this->call('DELETE', 'open_collaborations/products/'.$product_id, [], 202409);
+    }
 }
