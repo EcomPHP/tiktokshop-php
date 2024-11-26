@@ -14,6 +14,7 @@ use EcomPHP\TiktokShop\Errors\ResponseException;
 use EcomPHP\TiktokShop\Resources\AffiliateCreator;
 use EcomPHP\TiktokShop\Resources\AffiliatePartner;
 use EcomPHP\TiktokShop\Resources\AffiliateSeller;
+use EcomPHP\TiktokShop\Resources\Analytics;
 use EcomPHP\TiktokShop\Resources\CustomerService;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
@@ -91,6 +92,7 @@ class Client
         AffiliateSeller::class,
         AffiliateCreator::class,
         AffiliatePartner::class,
+        Analytics::class,
     ];
 
     public function __construct($app_key, $app_secret, $options = [])
