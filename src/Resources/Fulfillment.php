@@ -153,7 +153,7 @@ class Fulfillment extends Resource
         return $this->call('POST', 'orders/'.$order_id.'/split', [
             RequestOptions::JSON => [
                 'order_id' => $order_id,
-                'splittable_groups' => static::dataTypeCast('array', $splittable_groups),
+                'splittable_groups' => $splittable_groups,
             ],
         ]);
     }
