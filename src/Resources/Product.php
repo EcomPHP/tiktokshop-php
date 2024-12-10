@@ -163,9 +163,11 @@ class Product extends GlobalProduct
         ]);
     }
 
-    public function getCategoryRules($category_id)
+    public function getCategoryRules($category_id, $params = [])
     {
-        return $this->call('GET', 'categories/'.$category_id.'/rules');
+        return $this->call('GET', 'categories/'.$category_id.'/rules', [
+            RequestOptions::QUERY => $params
+        ]);
     }
 
     public function recommendCategory($product_title, $description = '', $images = [], $category_version = 'v1')
