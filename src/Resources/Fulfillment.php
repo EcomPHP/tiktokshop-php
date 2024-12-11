@@ -73,12 +73,12 @@ class Fulfillment extends Resource
 
     public function shipPackage($package_id, $handover_method = 'PICKUP', $pickup_slot = [], $self_shipment = [])
     {
+        $body = ['handover_method' => $handover_method];
+
+        if ($pickup_slot) $body['pickup_slot'] = $pickup_slot;
+        if ($self_shipment) $body['self_shipment'] = $self_shipment;
         return $this->call('POST', 'packages/'.$package_id.'/ship', [
-            RequestOptions::JSON => [
-                'handover_method' => $handover_method,
-                'pickup_slot' => $pickup_slot,
-                'self_shipment' => $self_shipment,
-            ]
+            RequestOptions::JSON => $body
         ]);
     }
 
