@@ -212,4 +212,56 @@ class Product extends GlobalProduct
             RequestOptions::JSON => $params
         ]);
     }
+
+    public function searchResponsiblePersons($query = [], $body = null)
+    {
+        if ($body === null) {
+            static::extractParams($query, $query, $body);
+        }
+
+        return $this->call('POST', 'compliance/responsible_persons/search', [
+            RequestOptions::QUERY => $query,
+            is_array($body) ? RequestOptions::JSON : RequestOptions::FORM_PARAMS => $body,
+        ]);
+    }
+
+    public function searchManufacturers($query = [], $body = null)
+    {
+        if ($body === null) {
+            static::extractParams($query, $query, $body);
+        }
+
+        return $this->call('POST', 'compliance/manufacturers/search', [
+            RequestOptions::QUERY => $query,
+            is_array($body) ? RequestOptions::JSON : RequestOptions::FORM_PARAMS => $body,
+        ]);
+    }
+
+    public function createResponsiblePerson($body)
+    {
+        return $this->call('POST', 'compliance/responsible_persons', [
+            RequestOptions::JSON => $body
+        ]);
+    }
+
+    public function createManufacturer($body)
+    {
+        return $this->call('POST', 'compliance/manufacturers', [
+            RequestOptions::JSON => $body
+        ]);
+    }
+
+    public function partialEditManufacturer($manufacturer_id, $body = [])
+    {
+        return $this->call('POST', 'compliance/manufacturers/'.$manufacturer_id.'/partial_edit', [
+            RequestOptions::JSON => $body
+        ]);
+    }
+
+    public function partialEditResponsiblePerson($responsible_person_id, $body = [])
+    {
+        return $this->call('POST', 'compliance/responsible_persons/'.$responsible_person_id.'/partial_edit', [
+            RequestOptions::JSON => $body
+        ]);
+    }
 }
