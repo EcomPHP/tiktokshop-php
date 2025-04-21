@@ -145,4 +145,46 @@ class AffiliateSellerTest extends TestResource
         $this->caller->removeOpenCollaboration(1);
         $this->assertPreviousRequest('DELETE', 'affiliate_seller/202409/open_collaborations/products/1');
     }
+
+    public function testGetOpenCollaborationCreatorContentDetail()
+    {
+        $this->caller->getOpenCollaborationCreatorContentDetail();
+        $this->assertPreviousRequest('GET', 'affiliate_seller/202412/open_collaborations/creator_content_details');
+    }
+
+    public function testGetMessageInConversation()
+    {
+        $this->caller->getMessageInConversation(1);
+        $this->assertPreviousRequest('GET', 'affiliate_seller/202412/conversation/1/messages');
+    }
+
+    public function testGetConversationList()
+    {
+        $this->caller->getConversationList();
+        $this->assertPreviousRequest('GET', 'affiliate_seller/202412/conversations');
+    }
+
+    public function testSendImMessage()
+    {
+        $this->caller->sendImMessage(1, '', '');
+        $this->assertPreviousRequest('POST', 'affiliate_seller/202412/conversations/1/messages');
+    }
+
+    public function testCreateConversationWithCreator()
+    {
+        $this->caller->createConversationWithCreator(1);
+        $this->assertPreviousRequest('POST', 'affiliate_seller/202412/conversations');
+    }
+
+    public function testMarkConversationRead()
+    {
+        $this->caller->markConversationRead();
+        $this->assertPreviousRequest('POST', 'affiliate_seller/202412/conversations/read');
+    }
+
+    public function testGetLatestUnreadMessages()
+    {
+        $this->caller->getLatestUnreadMessages();
+        $this->assertPreviousRequest('GET', 'affiliate_seller/202412/conversations/messages/list/newest');
+    }
 }
