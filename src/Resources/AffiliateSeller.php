@@ -196,4 +196,70 @@ class AffiliateSeller extends Resource
     {
         return $this->call('DELETE', 'open_collaborations/products/'.$product_id, [], 202409);
     }
+
+    public function getOpenCollaborationCreatorContentDetail($product_id, $query = [])
+    {
+        $query = array_merge([
+            'page_size' => 20,
+        ], $query);
+        return $this->call('GET', 'open_collaborations/creator_content_details', [
+            RequestOptions::QUERY => ['product_id' => $product_id],
+        ], 202412);
+    }
+
+    public function getMessageInConversation($conversation_id, $query = [])
+    {
+        $query = array_merge([
+            'page_size' => 20,
+        ], $query);
+
+        return $this->call('GET', 'conversation/' . $conversation_id . '/messages', [
+            RequestOptions::QUERY => $query,
+        ], 202412);
+    }
+
+    public function getConversationList($query = [])
+    {
+        $query = array_merge([
+            'page_size' => 20,
+        ], $query);
+
+        return $this->call('GET', 'conversations', [
+            RequestOptions::QUERY => $query,
+        ], 202412);
+    }
+
+    public function sendImMessage($conversation_id, $msg_type, $content)
+    {
+        return $this->call('POST', 'conversations/' . $conversation_id . '/messages', [
+            RequestOptions::BODY => [
+                'msg_type' => $msg_type,
+                'content' => $content,
+            ]
+        ], 202412);
+    }
+
+    public function createConversationWithCreator($creator_id, $only_need_conversation_id = true)
+    {
+        return $this->call('POST', 'conversations', [
+            RequestOptions::BODY => [
+                'creator_id' => $creator_id,
+                'only_need_conversation_id' => $only_need_conversation_id,
+            ],
+        ], 202412);
+    }
+
+    public function markConversationRead($conversation_ids = [])
+    {
+        return $this->call('POST', 'conversations/read', [
+            RequestOptions::BODY => [
+                'conversation_ids' => $conversation_ids,
+            ],
+        ], 202412);
+    }
+
+    public function getLatestUnreadMessages()
+    {
+        return $this->call('GET', 'conversations/messages/list/newest', [], 202412);
+    }
 }
