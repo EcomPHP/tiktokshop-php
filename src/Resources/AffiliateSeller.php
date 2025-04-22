@@ -232,7 +232,7 @@ class AffiliateSeller extends Resource
     public function sendImMessage($conversation_id, $msg_type, $content)
     {
         return $this->call('POST', 'conversations/' . $conversation_id . '/messages', [
-            RequestOptions::BODY => [
+            RequestOptions::JSON => [
                 'msg_type' => $msg_type,
                 'content' => $content,
             ]
@@ -242,7 +242,7 @@ class AffiliateSeller extends Resource
     public function createConversationWithCreator($creator_id, $only_need_conversation_id = true)
     {
         return $this->call('POST', 'conversations', [
-            RequestOptions::BODY => [
+            RequestOptions::JSON => [
                 'creator_id' => $creator_id,
                 'only_need_conversation_id' => $only_need_conversation_id,
             ],
@@ -252,7 +252,7 @@ class AffiliateSeller extends Resource
     public function markConversationRead($conversation_ids = [])
     {
         return $this->call('POST', 'conversations/read', [
-            RequestOptions::BODY => [
+            RequestOptions::JSON => [
                 'conversation_ids' => $conversation_ids,
             ],
         ], 202412);
