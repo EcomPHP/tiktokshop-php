@@ -197,13 +197,13 @@ class AffiliateSeller extends Resource
         return $this->call('DELETE', 'open_collaborations/products/'.$product_id, [], 202409);
     }
 
-    public function getOpenCollaborationCreatorContentDetail($product_id, $query = [])
+    public function getOpenCollaborationCreatorContentDetail($query = [])
     {
         $query = array_merge([
             'page_size' => 20,
         ], $query);
         return $this->call('GET', 'open_collaborations/creator_content_details', [
-            RequestOptions::QUERY => ['product_id' => $product_id],
+            RequestOptions::QUERY => $query,
         ], 202412);
     }
 
