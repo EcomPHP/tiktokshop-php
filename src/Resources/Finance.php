@@ -65,4 +65,9 @@ class Finance extends Resource
             RequestOptions::QUERY => $params,
         ]);
     }
+
+    public function getTransactionsByOrder($order_id)
+    {
+        return $this->call('GET', 'orders/'.$order_id.'/statement_transactions');
+    }
 }
