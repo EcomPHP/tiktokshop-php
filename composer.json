@@ -2,6 +2,9 @@
   "name": "ecomphp/tiktokshop-php",
   "description": "Unofficial Tiktok Shop API Client in PHP",
   "type": "library",
+  "bin": [
+    "bin/tiktokshop-mcp-server"
+  ],
   "license": "Apache-2.0",
   "authors": [
     {

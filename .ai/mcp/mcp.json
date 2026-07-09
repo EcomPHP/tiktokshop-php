@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "tiktokshop": {
+      "command": "php",
+      "args": [
+        "bin/tiktokshop-mcp-server"
+      ]
+    }
+  }
+}

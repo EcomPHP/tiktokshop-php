@@ -1,0 +1,582 @@
+#!/usr/bin/env php
+<?php
+
+require dirname(__DIR__).'/vendor/autoload.php';
+
+class Server
+{
+    const DOCUMENT_TREE_URL = 'https://partner.tiktokshop.com/api/v1/document/tree?workspace_id=3&aid=359713&locale=en-US';
+    const API_META_URL = 'https://partner.tiktokshop.com/api/v1/document/api_meta';
+    const DOCUMENT_PAGE_URL = 'https://partner.tiktokshop.com/docv2/page/';
+
+    private $documentTree;
+
+    public function listTools()
+    {
+        return [
+            [
+                'name' => 'get_api_list',
+                'description' => 'Search the live TikTok Shop API Reference index. Prefer targeted category or search filters, then call get_api_detail with the returned path.',
+                'inputSchema' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'category' => [
+                            'type' => 'string',
+                            'description' => 'Optional top-level category name filter, for example Orders. Prefer this over loading the full tree when the category is known.',
+                        ],
+                        'search' => [
+                            'type' => 'string',
+                            'description' => 'Optional case-insensitive search across document names, paths, and categories, for example order list.',
+                        ],
+                        'include_dirs' => [
+                            'type' => 'boolean',
+                            'description' => 'Set true only for category discovery or hierarchy inspection; normal endpoint lookup should leave this false.',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'name' => 'get_api_detail',
+                'description' => 'Get compact implementation-focused details for one TikTok Shop API Reference document.',
+                'inputSchema' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'document_id' => [
+                            'type' => 'string',
+                            'description' => 'Exact TikTok Shop document id.',
+                        ],
+                        'path' => [
+                            'type' => 'string',
+                            'description' => 'Exact document path slug, for example get-order-list-202309.',
+                        ],
+                        'name' => [
+                            'type' => 'string',
+                            'description' => 'Exact or partial document name, for example Get Order List.',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    public function callTool($name, array $arguments)
+    {
+        switch ($name) {
+            case 'get_api_list':
+                return $this->getApiList($arguments);
+            case 'get_api_detail':
+                return $this->getApiDetail($arguments);
+            default:
+                throw new InvalidArgumentException('Unknown tool: '.$name);
+        }
+    }
+
+    public function getApiList(array $arguments)
+    {
+        $tree = $this->getApiReferenceTree();
+        $documents = $this->filterDocuments($tree['documents'], $arguments);
+
+        return [
+            'source' => self::DOCUMENT_TREE_URL,
+            'root' => $this->compactDocument($tree['root']),
+            'document_count' => count($documents),
+            'recommended_lookup_pattern' => [
+                'category_example' => ['category' => 'Orders'],
+                'search_example' => ['search' => 'order list'],
+                'detail_example' => ['path' => 'get-order-list-202309'],
+                'note' => 'Use get_api_list as an index, then fetch one exact document with get_api_detail by path.',
+            ],
+            'documents' => $this->compactDocuments($documents),
+        ];
+    }
+
+    public function getApiDetail(array $arguments)
+    {
+        if (empty($arguments['document_id']) && empty($arguments['path']) && empty($arguments['name'])) {
+            throw new InvalidArgumentException('document_id, path, or name is required.');
+        }
+
+        $tree = $this->getApiReferenceTree();
+        $matches = $this->filterDocuments($tree['documents'], $arguments, true);
+        if (count($matches) === 0) {
+            throw new RuntimeException('API not found.');
+        }
+
+        if (count($matches) > 1) {
+            return [
+                'message' => 'Multiple APIs matched. Pass document_id or path to disambiguate.',
+                'matches' => array_values($matches),
+            ];
+        }
+
+        $document = array_values($matches)[0];
+        if ($document['document_path'] === '') {
+            throw new RuntimeException('Selected API document does not have a document_path.');
+        }
+
+        $apiMeta = $this->fetchApiMeta($document['document_path']);
+        $children = [];
+        foreach ($tree['documents'] as $item) {
+            if ($item['parent_id'] === $document['document_id']) {
+                $children[] = $item;
+            }
+        }
+
+        return $this->compactApiDetail($document, $apiMeta, $children);
+    }
+
+    private function compactApiDetail(array $document, array $apiMeta, array $children)
+    {
+        $meta = isset($apiMeta['document_api_meta']) && is_array($apiMeta['document_api_meta']) ? $apiMeta['document_api_meta'] : [];
+
+        return [
+            'source' => self::API_META_URL.'?'.http_build_query(['src_document_id' => $document['document_path']]),
+            'tree_source' => self::DOCUMENT_TREE_URL,
+            'category' => $document['category'],
+            'name' => isset($meta['title']) && $meta['title'] !== '' ? $meta['title'] : $document['name'],
+            'path' => $document['document_path'],
+            'document_id' => $document['document_id'],
+            'method' => $this->httpMethod(isset($meta['method']) ? $meta['method'] : null),
+            'endpoint' => isset($meta['interface_path']) ? $meta['interface_path'] : null,
+            'description' => isset($meta['env_desc']) ? $meta['env_desc'] : null,
+            'required_headers' => $this->parameterNames(isset($meta['request_header_param']) ? $meta['request_header_param'] : [], true),
+            'optional_headers' => $this->parameterNames(isset($meta['request_header_param']) ? $meta['request_header_param'] : [], false),
+            'required_query' => $this->parameterNames(isset($meta['request_query_param']) ? $meta['request_query_param'] : [], true),
+            'optional_query' => $this->parameterNames(isset($meta['request_query_param']) ? $meta['request_query_param'] : [], false),
+            'required_body_fields' => $this->parameterNames(isset($meta['request_body_param']) ? $meta['request_body_param'] : [], true),
+            'optional_body_filters' => $this->parameterNames(isset($meta['request_body_param']) ? $meta['request_body_param'] : [], false),
+            'pagination' => $this->paginationSummary(isset($meta['request_query_param']) ? $meta['request_query_param'] : [], isset($meta['response_param']) ? $meta['response_param'] : []),
+            'key_response_objects' => $this->responseObjectNames(isset($meta['response_param']) ? $meta['response_param'] : []),
+            'children' => $this->compactDocuments($children),
+            'url' => $document['document_path'] !== '' ? self::DOCUMENT_PAGE_URL.$document['document_path'] : null,
+        ];
+    }
+
+    private function httpMethod($method)
+    {
+        $methods = [
+            1 => 'POST',
+            2 => 'GET',
+            3 => 'PUT',
+            4 => 'DELETE',
+            5 => 'PATCH',
+        ];
+
+        if (is_numeric($method) && isset($methods[(int) $method])) {
+            return $methods[(int) $method];
+        }
+
+        return $method !== null ? (string) $method : null;
+    }
+
+    private function parameterNames($parameters, $required)
+    {
+        if (!is_array($parameters)) {
+            return [];
+        }
+
+        $names = [];
+        foreach ($parameters as $parameter) {
+            if (!is_array($parameter) || empty($parameter['name'])) {
+                continue;
+            }
+
+            $isRequired = isset($parameter['required']) && strtoupper((string) $parameter['required']) === 'Y';
+            if ($isRequired === $required) {
+                $names[] = $parameter['name'];
+            }
+        }
+
+        return $names;
+    }
+
+    private function paginationSummary($queryParameters, $responseParameters)
+    {
+        $request = in_array('page_token', $this->parameterNames($queryParameters, false), true) ? 'page_token' : null;
+        $responseNames = $this->responseObjectNames($responseParameters);
+        $response = in_array('next_page_token', $responseNames, true) ? 'next_page_token' : null;
+
+        if ($request === null && $response === null) {
+            return null;
+        }
+
+        return [
+            'request' => $request,
+            'response' => $response,
+        ];
+    }
+
+    private function responseObjectNames($parameters)
+    {
+        if (!is_array($parameters)) {
+            return [];
+        }
+
+        $names = [];
+        foreach ($parameters as $parameter) {
+            if (!is_array($parameter) || empty($parameter['name'])) {
+                continue;
+            }
+
+            $rawName = $parameter['name'];
+            $depth = strlen($rawName) - strlen(ltrim($rawName, '^'));
+            if ($depth > 1) {
+                continue;
+            }
+
+            $name = ltrim($rawName, '^');
+            if ($name !== '' && !in_array($name, $names, true)) {
+                $names[] = $name;
+            }
+        }
+
+        return $names;
+    }
+
+    private function getApiReferenceTree()
+    {
+        if (is_array($this->documentTree)) {
+            return $this->documentTree;
+        }
+
+        $payload = $this->fetchDocumentTree();
+        $items = isset($payload['data']['document_tree']) && is_array($payload['data']['document_tree']) ? $payload['data']['document_tree'] : [];
+        $root = null;
+        $byId = [];
+        $childrenByParent = [];
+
+        foreach ($items as $item) {
+            if (!is_array($item) || empty($item['document_id'])) {
+                continue;
+            }
+
+            $byId[$item['document_id']] = $item;
+            $childrenByParent[$item['parent_id']][] = $item;
+            if ($item['name'] === 'API Reference') {
+                $root = $item;
+            }
+        }
+
+        if ($root === null) {
+            throw new RuntimeException('Unable to find API Reference root document.');
+        }
+
+        $documents = [];
+        $queue = [[$root, null]];
+        while (count($queue) > 0) {
+            list($item, $category) = array_shift($queue);
+            $parentId = isset($item['parent_id']) ? $item['parent_id'] : '';
+            $documentId = $item['document_id'];
+            $isRoot = $documentId === $root['document_id'];
+            $isDir = !empty($item['is_dir']);
+            $currentCategory = $category;
+
+            if (!$isRoot && $parentId === $root['document_id']) {
+                $currentCategory = $item['name'];
+            }
+
+            $documents[] = $this->normalizeDocument($item, $currentCategory);
+
+            foreach (isset($childrenByParent[$documentId]) ? $childrenByParent[$documentId] : [] as $child) {
+                $queue[] = [$child, $currentCategory];
+            }
+        }
+
+        $this->documentTree = [
+            'root' => $this->normalizeDocument($root, null),
+            'documents' => $documents,
+            'by_id' => $byId,
+        ];
+
+        return $this->documentTree;
+    }
+
+    private function fetchDocumentTree()
+    {
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'header' => "Accept: application/json\r\nUser-Agent: Mozilla/5.0\r\n",
+                'timeout' => 20,
+            ],
+        ]);
+        $body = file_get_contents(self::DOCUMENT_TREE_URL, false, $context);
+        if ($body === false) {
+            throw new RuntimeException('Unable to fetch TikTok Shop document tree.');
+        }
+
+        $payload = json_decode($body, true);
+        if (!is_array($payload)) {
+            throw new RuntimeException('Unable to parse TikTok Shop document tree JSON response.');
+        }
+
+        if (!isset($payload['code']) || (int) $payload['code'] !== 0) {
+            throw new RuntimeException('TikTok Shop document tree request failed: '.(isset($payload['message']) ? $payload['message'] : 'unknown error'));
+        }
+
+        return $payload;
+    }
+
+    private function fetchApiMeta($documentPath)
+    {
+        $url = self::API_META_URL.'?'.http_build_query(['src_document_id' => $documentPath]);
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'header' => "Accept: application/json\r\nUser-Agent: Mozilla/5.0\r\n",
+                'timeout' => 20,
+            ],
+        ]);
+        $body = file_get_contents($url, false, $context);
+        if ($body === false) {
+            throw new RuntimeException('Unable to fetch TikTok Shop API detail.');
+        }
+
+        $payload = json_decode($body, true);
+        if (!is_array($payload)) {
+            throw new RuntimeException('Unable to parse TikTok Shop API detail JSON response.');
+        }
+
+        if (!isset($payload['code']) || (int) $payload['code'] !== 0) {
+            throw new RuntimeException('TikTok Shop API detail request failed: '.(isset($payload['message']) ? $payload['message'] : 'unknown error'));
+        }
+
+        return isset($payload['data']) && is_array($payload['data']) ? $payload['data'] : [];
+    }
+
+    private function normalizeDocument(array $item, $category)
+    {
+        return [
+            'document_id' => isset($item['document_id']) ? $item['document_id'] : null,
+            'parent_id' => isset($item['parent_id']) ? $item['parent_id'] : null,
+            'name' => isset($item['name']) ? $item['name'] : null,
+            'category' => $category,
+            'is_dir' => !empty($item['is_dir']),
+            'is_api_doc' => !empty($item['is_api_doc']),
+            'doc_type' => isset($item['doc_type']) ? $item['doc_type'] : null,
+            'document_path' => isset($item['document_path']) ? $item['document_path'] : '',
+            'update_time' => isset($item['update_time']) ? $item['update_time'] : null,
+            'url' => !empty($item['document_path']) ? self::DOCUMENT_PAGE_URL.$item['document_path'] : null,
+        ];
+    }
+
+    private function filterDocuments(array $documents, array $arguments, $exact = false)
+    {
+        $filtered = [];
+        foreach ($documents as $document) {
+            if (empty($arguments['include_dirs']) && $document['is_dir']) {
+                continue;
+            }
+
+            if (!empty($arguments['category']) && strcasecmp((string) $document['category'], $arguments['category']) !== 0) {
+                continue;
+            }
+
+            if (!empty($arguments['document_id']) && $document['document_id'] !== $arguments['document_id']) {
+                continue;
+            }
+
+            if (!empty($arguments['path'])) {
+                $path = trim($arguments['path'], '/');
+                $matched = $exact ? $document['document_path'] === $path : stripos($document['document_path'], $path) !== false;
+                if (!$matched) {
+                    continue;
+                }
+            }
+
+            if (!empty($arguments['name'])) {
+                if (stripos($document['name'], $arguments['name']) === false) {
+                    continue;
+                }
+            }
+
+            if (!empty($arguments['search'])) {
+                $haystack = implode(' ', [$document['name'], $document['document_path'], $document['category']]);
+                if (stripos($haystack, $arguments['search']) === false) {
+                    continue;
+                }
+            }
+
+            $filtered[] = $document;
+        }
+
+        return $filtered;
+    }
+
+    private function compactDocuments(array $documents)
+    {
+        $compact = [];
+        foreach ($documents as $document) {
+            $compact[] = $this->compactDocument($document);
+        }
+
+        return array_values($compact);
+    }
+
+    private function compactDocument(array $document)
+    {
+        $item = [
+            'category' => $document['category'],
+            'name' => $document['name'],
+            'path' => $document['document_path'],
+            'document_id' => $document['document_id'],
+        ];
+
+        if (!empty($document['is_dir'])) {
+            $item['is_dir'] = true;
+        }
+
+        return $item;
+    }
+
+    private function ancestors(array $document, array $byId)
+    {
+        $ancestors = [];
+        $parentId = $document['parent_id'];
+        while ($parentId !== null && $parentId !== '' && isset($byId[$parentId])) {
+            array_unshift($ancestors, $this->normalizeDocument($byId[$parentId], null));
+            $parentId = isset($byId[$parentId]['parent_id']) ? $byId[$parentId]['parent_id'] : '';
+        }
+
+        return $ancestors;
+    }
+}
+
+$server = new Server();
+
+function writeMessage(array $payload)
+{
+    $json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if ($json === false) {
+        return;
+    }
+
+    fwrite(STDOUT, $json."\n");
+    fflush(STDOUT);
+}
+
+function readMessage()
+{
+    $line = fgets(STDIN);
+    if ($line === false) {
+        return null;
+    }
+
+    $trimmed = trim($line);
+    if ($trimmed === '') {
+        return null;
+    }
+
+    $decoded = json_decode($trimmed, true);
+    if (!is_array($decoded)) {
+        return null;
+    }
+
+    return $decoded;
+}
+
+while (true) {
+    $request = readMessage();
+    if ($request === null) {
+        if (feof(STDIN)) {
+            exit(0);
+        }
+        continue;
+    }
+
+    if (!array_key_exists('method', $request)) {
+        continue;
+    }
+
+    $method = $request['method'];
+    if ($method === 'notifications/initialized' || $method === 'initialized') {
+        continue;
+    }
+
+    if (!array_key_exists('id', $request)) {
+        continue;
+    }
+
+    $id = $request['id'];
+
+    try {
+        if ($method === 'initialize') {
+            writeMessage([
+                'jsonrpc' => '2.0',
+                'id' => $id,
+                'result' => [
+                    'protocolVersion' => '2024-11-05',
+                    'serverInfo' => [
+                        'name' => 'tiktokshop-php-mcp',
+                        'version' => '0.1.0',
+                    ],
+                    'capabilities' => [
+                        'tools' => new stdClass(),
+                    ],
+                ],
+            ]);
+            continue;
+        }
+
+        if ($method === 'tools/list') {
+            writeMessage([
+                'jsonrpc' => '2.0',
+                'id' => $id,
+                'result' => [
+                    'tools' => $server->listTools(),
+                ],
+            ]);
+            continue;
+        }
+
+        if ($method === 'tools/call') {
+            $params = isset($request['params']) && is_array($request['params']) ? $request['params'] : [];
+            $name = isset($params['name']) ? $params['name'] : '';
+            $arguments = isset($params['arguments']) && is_array($params['arguments']) ? $params['arguments'] : [];
+            $result = $server->callTool($name, $arguments);
+
+            writeMessage([
+                'jsonrpc' => '2.0',
+                'id' => $id,
+                'result' => [
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                        ],
+                    ],
+                ],
+            ]);
+            continue;
+        }
+
+        if ($method === 'ping') {
+            writeMessage([
+                'jsonrpc' => '2.0',
+                'id' => $id,
+                'result' => [
+                    'ok' => true,
+                ],
+            ]);
+            continue;
+        }
+
+        writeMessage([
+            'jsonrpc' => '2.0',
+            'id' => $id,
+            'error' => [
+                'code' => -32601,
+                'message' => 'Method not found: '.$method,
+            ],
+        ]);
+    } catch (Throwable $exception) {
+        writeMessage([
+            'jsonrpc' => '2.0',
+            'id' => $id,
+            'error' => [
+                'code' => -32000,
+                'message' => $exception->getMessage(),
+            ],
+        ]);
+    }
+}
