@@ -468,8 +468,8 @@ function readMessage()
     }
 
     $decoded = json_decode($trimmed, true);
-    if (!is_array($decoded)) {
-        return null;
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return ['__mcp_parse_error' => true];
     }
 
     return $decoded;
@@ -484,7 +484,27 @@ while (true) {
         continue;
     }
 
-    if (!array_key_exists('method', $request)) {
+    if (is_array($request) && isset($request['__mcp_parse_error'])) {
+        writeMessage([
+            'jsonrpc' => '2.0',
+            'id' => null,
+            'error' => [
+                'code' => -32700,
+                'message' => 'Parse error',
+            ],
+        ]);
+        continue;
+    }
+
+    if (!is_array($request) || !isset($request['jsonrpc']) || $request['jsonrpc'] !== '2.0' || !isset($request['method']) || !is_string($request['method'])) {
+        writeMessage([
+            'jsonrpc' => '2.0',
+            'id' => is_array($request) && array_key_exists('id', $request) ? $request['id'] : null,
+            'error' => [
+                'code' => -32600,
+                'message' => 'Invalid Request',
+            ],
+        ]);
         continue;
     }
 
@@ -533,19 +553,32 @@ while (true) {
             $params = isset($request['params']) && is_array($request['params']) ? $request['params'] : [];
             $name = isset($params['name']) ? $params['name'] : '';
             $arguments = isset($params['arguments']) && is_array($params['arguments']) ? $params['arguments'] : [];
-            $result = $server->callTool($name, $arguments);
-
-            writeMessage([
-                'jsonrpc' => '2.0',
-                'id' => $id,
-                'result' => [
+            try {
+                $result = $server->callTool($name, $arguments);
+                $toolResult = [
                     'content' => [
                         [
                             'type' => 'text',
                             'text' => json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
                         ],
                     ],
-                ],
+                ];
+            } catch (Throwable $exception) {
+                $toolResult = [
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => $exception instanceof InvalidArgumentException ? $exception->getMessage() : 'Unable to complete tool request.',
+                        ],
+                    ],
+                    'isError' => true,
+                ];
+            }
+
+            writeMessage([
+                'jsonrpc' => '2.0',
+                'id' => $id,
+                'result' => $toolResult,
             ]);
             continue;
         }
